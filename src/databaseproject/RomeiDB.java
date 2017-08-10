@@ -22,9 +22,8 @@ public class RomeiDB extends Application {
     @Override
     public void start(Stage primaryStage) {       
         PaneOrg app=new PaneOrg();
-        Scene scene = new Scene(app.getRoot(), 800, 500);
-        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());
-        
+        Scene scene = new Scene(app.getRoot(), 900, 500);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());       
         primaryStage.setTitle("Comercial Romei - DB Management");
         primaryStage.setScene(scene);
         primaryStage.show();

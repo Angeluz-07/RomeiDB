@@ -4,28 +4,39 @@
  * and open the template in the editor.
  */
 package databaseproject;
-
+import java.time.LocalDate;
+import java.util.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 
 /**
  *
  * @author User
  */
 public class TabRegister extends Tab {
-    DatePicker date=new DatePicker();
-    static TableView<Register> registerTable=new TableView(RegisterTableUtil.getRegisterList());
+    DatePicker datePicker=new DatePicker();
+    static TableView<Register> registerTable=new TableView(RegisterTableUtil.getRegisterList());   
+    static Label totalValLabel;
     
     public TabRegister(String text){
         this.setText(text);   
         init();
     }
     private void init(){        
-        date.setEditable(false);        
-        
-        registerTable.setMinWidth(505);
+        datePicker.setEditable(false);        
+        datePicker.setValue(LocalDate.now());       
+        registerTable.setMinWidth(620);
         registerTable.setEditable(true);
         
         registerTable.getColumns().addAll(RegisterTableUtil.getAddedOrRemovedStockColumn(),
@@ -34,15 +45,35 @@ public class TabRegister extends Tab {
                                           RegisterTableUtil.getFinalStockColumn(),
                                           RegisterTableUtil.getQuantitySoldColumn(),
                                           RegisterTableUtil.getCashSaleColumn());
-        GridPane grid =new GridPane();        
-        grid.addRow(0, date);        
-        grid.addRow(1, registerTable);
-        this.setContent(grid);
+        
+        VBox container =new VBox();                
+        container.getChildren().addAll(datePicker,registerTable);                
+        
+        HBox resultContainer=new HBox();                
+        resultContainer.setAlignment(Pos.CENTER_RIGHT);
+        Label totalLabel=new Label("Total : ");       
+        totalValLabel=new Label("      ");
+        
+        resultContainer.getChildren().addAll(totalLabel,totalValLabel);
+        
+        HBox buttonsContainer=new HBox(); 
+        buttonsContainer.setAlignment(Pos.CENTER);
+        buttonsContainer.setPadding(new Insets(10,10,10,10));       
+        buttonsContainer.setSpacing(10);
+        Button newRegB= new Button("Nuevo Registro");      
+        newRegB.setOnAction(e->{    
+            registerTable.setItems(RegisterTableUtil.getRegisterList());            
+        });
+        Button saveRegB= new Button("Guardar");        
+        buttonsContainer.getChildren().addAll(newRegB,saveRegB);
+        
+        container.getChildren().addAll(resultContainer,buttonsContainer);
+        
+        this.setContent(container);
     }
 
     public static TableView<Register> getRegisterTable() {
         return registerTable;
     }
-    
-    
+
 }

@@ -5,6 +5,7 @@
  */
 package databaseproject;
 
+import java.time.LocalDate;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.GridPane;
@@ -21,6 +22,7 @@ public class TabAddNewProduct extends Tab {
         init();
     }
     private void init(){
+        date.setValue(LocalDate.now());
         GridPane grid =new GridPane();
         date.setEditable(false);
         grid.addRow(0, date);

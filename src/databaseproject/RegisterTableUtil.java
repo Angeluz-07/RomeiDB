@@ -7,6 +7,7 @@ package databaseproject;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -42,25 +43,52 @@ public class RegisterTableUtil {
     */
     
     /* Returns AddedOrRemovedStock TableColumn */
-    public static TableColumn<Register, Integer> getAddedOrRemovedStockColumn() {
+    public static  TableColumn<Register, Integer> getAddedOrRemovedStockColumn() {
         TableColumn<Register, Integer> addedOrRemovedStockCol = new TableColumn<>("Editar Stock");                
         /*below the parameter is the name of the
           attribute in the class Register*/
         addedOrRemovedStockCol.setCellValueFactory(new PropertyValueFactory<>("addedOrRemovedStock"));
         //string converter
-        addedOrRemovedStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));       
+        addedOrRemovedStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));              
 
+        addedOrRemovedStockCol.setId("addedOrRemovedStockColID");
         //updateCell is an event of CellEditEvent type
-        addedOrRemovedStockCol.setOnEditCommit(updateCell->{                        
-            //this line gets the cell selected by the user
-            Register r=addedOrRemovedStockCol.getTableView().getSelectionModel().getSelectedItem();
-            r.setAddedOrRemovedStock(updateCell.getNewValue());            
-            addedOrRemovedStockCol.getTableView().refresh();
-            System.out.println(r.toString());
-        });
-        
+        addedOrRemovedStockCol.setOnEditCommit(new EditCellHandler(addedOrRemovedStockCol));        
         return  addedOrRemovedStockCol;
     }
+    
+    private static class EditCellHandler implements EventHandler<CellEditEvent<Register,Integer>>{
+        //coll could be addedOrRemoveStockCol or finalStock 
+        TableColumn<Register, Integer> col;
+        //I pass the column where the cell was edited
+        public EditCellHandler(TableColumn<Register, Integer> col){            
+            this.col=col;            
+        }
+        @Override
+        public void handle(CellEditEvent updateCell){
+            //this line gets the Register Object asociated with cell selected by the user                                   
+            Register r=col.getTableView().getSelectionModel().getSelectedItem();                                   
+            switch(col.getId()){
+                case "addedOrRemovedStockColID":
+                    r.setAddedOrRemovedStock((Integer)updateCell.getNewValue());
+                    break;
+                case "finalStockColID":
+                    r.setFinalStock((Integer)updateCell.getNewValue());
+                    break;
+            }            
+            r.computeQuantitySold();
+            r.computeCashSales();
+            
+            ObservableList<Register> registers=col.getTableView().getItems();        
+            System.out.println(sumCashSales(registers));                        
+            
+            TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
+            col.getTableView().refresh();
+            System.out.println(r.toString());
+        }
+    }
+    
+    
     /* Returns Product TableColumn */
     public static TableColumn<Register, Product> getProductColumn() {
         TableColumn<Register, Product> productCol = new TableColumn<>("Producto");
@@ -88,16 +116,9 @@ public class RegisterTableUtil {
         //string converter
         finalStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));               
         
-        //updateCell is an event of CellEditEvent type
-        finalStockCol.setOnEditCommit(updateCell->{                        
-            //this line gets the cell selected by the user
-            Register r=finalStockCol.getTableView().getSelectionModel().getSelectedItem();
-            r.setFinalStock(updateCell.getNewValue());
-            r.computeQuantitySold();
-            r.computeCashSales();
-            finalStockCol.getTableView().refresh();
-            System.out.println(r.toString());
-        });
+        finalStockCol.setId("finalStockColID");
+        //updateCell is an event of CellEditEvent type        
+        finalStockCol.setOnEditCommit(new EditCellHandler(finalStockCol));
         return finalStockCol;
     }
     
@@ -120,9 +141,13 @@ public class RegisterTableUtil {
         return cashSaleCol;
     }
     
-    /*
-        Routines for update the values of 
-        "addedOrRemovedStock" and "finalStock"
-    */
+    
+    public static double sumCashSales(ObservableList<Register> registers){
+     double s=0;
+     for(Register r: registers){
+        s+=r.getCashSale();
+     }
+     return s;
+    }
 }
 
