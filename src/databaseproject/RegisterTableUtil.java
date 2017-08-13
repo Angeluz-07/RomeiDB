@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.IntegerStringConverter;
@@ -20,8 +21,8 @@ import javafx.util.converter.IntegerStringConverter;
 
 public class RegisterTableUtil {
     
-    /* Returns an observable list of registers */
-    public static ObservableList<Register> getRegisterList() {       
+    /* Returns an observable list of registers to TAB REGISTER*/
+    public static ObservableList<Register> getRegListToRegister() {       
         ObservableList<Register> registers=FXCollections.observableArrayList();        
         
         //exists a register object to be loaded, by each product.
@@ -34,6 +35,20 @@ public class RegisterTableUtil {
         return registers;
     }
     
+    /* Returns an observable list of registers to TAB REPORT*/
+    public static ObservableList<Register> getRegListToReport() {       
+        ObservableList<Register> registers=FXCollections.observableArrayList();        
+        
+        //all the registers object that could be created over one Product       
+        //now i create the register in format to show on report
+        Register r1 = new Register("10/11/2008",new Product("Pantalon",10),10,300);
+        Register r2 = new Register("7/10/2009",new Product("Pantalon",10),5,50);
+        Register r3 = new Register("10/11/2008",new Product("Pantalon",6),8,80);
+        Register r4 = new Register("10/11/2010",new Product("Pantalon",6),7,70);                       
+        registers.addAll(r1,r2,r3,r4);        
+        return registers;
+    }
+    
     /*
         The TableColumn<S, T> class is a generic class. The S parameter is the items type, which is of the same
         type as the parameter of the TableView.For
@@ -43,6 +58,17 @@ public class RegisterTableUtil {
         code creates a TableColumn with First Name as its header text:
         TableColumn<Person, String> fNameCol = new TableColumn<>("First Name");
     */
+    
+    /* Returns Date TableColumn used in TabReport */
+    public static  TableColumn<Register, String> getDateColumn() {
+        TableColumn<Register, String> dateCol = new TableColumn<>("Fecha");                
+        /*below the parameter is the name of the
+          attribute in the class Register*/
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+        //make editable with text field
+        dateCol.setCellFactory(TextFieldTableCell.forTableColumn());                      
+        return  dateCol;
+    }
     
     /* Returns AddedOrRemovedStock TableColumn */
     public static  TableColumn<Register, Integer> getAddedOrRemovedStockColumn() {
@@ -91,7 +117,7 @@ public class RegisterTableUtil {
         return finalStockCol;
     }
     
-    /* Returns Quantity Sold TableColumn */
+    /* Returns Quantity Sold TableColumn ALSO USED IN TAB REPORT*/
     public static TableColumn<Register, Integer> getQuantitySoldColumn() {
         TableColumn<Register, Integer> quantitySoldCol =new TableColumn<>("Cantidad Vendida");
         quantitySoldCol.setCellValueFactory(new PropertyValueFactory<>("quantitySold"));
@@ -100,7 +126,7 @@ public class RegisterTableUtil {
         
         return quantitySoldCol;
     }
-    /* Returns Cash Sale TableColumn */
+    /* Returns Cash Sale TableColumn ALSO USED IN TAB REPORT*/
     public static TableColumn<Register, Double> getCashSaleColumn() {
         TableColumn<Register, Double> cashSaleCol =new TableColumn<>("Venta($)");
         cashSaleCol.setCellValueFactory(new PropertyValueFactory<>("cashSale"));
@@ -117,12 +143,13 @@ public class RegisterTableUtil {
         //get the column the event ocurred and get its id
         switch(updateCell.getTableColumn().getId()){
             case "addedOrRemovedStockColID":
-                r.setAddedOrRemovedStock((Integer)updateCell.getNewValue());
+                r.setAddedOrRemovedStock((Integer)updateCell.getNewValue());               
                 break;
             case "finalStockColID":
                 r.setFinalStock((Integer)updateCell.getNewValue());
                 break;
         }
+        r.setDate(TabRegister.datePicker.getEditor().getText());
         r.computeQuantitySold();
         r.computeCashSales();
         

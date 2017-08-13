@@ -48,9 +48,8 @@ public class PaneOrg {
         //Creating tabs
         TabRegister tabRegister=new TabRegister("Registro");              
         TabAddNewProduct tabAddNewProduct=new TabAddNewProduct("Nuevo Producto");                               
-        
-        Tab report=new Tab("Reporte");                    
-        tabPane.getTabs().addAll(tabRegister,tabAddNewProduct,report);        
+        TabReport tabReport=new TabReport("Reporte");
+        tabPane.getTabs().addAll(tabRegister,tabAddNewProduct,tabReport);        
         root.setCenter(tabPane);
         
         root.setMinSize(200, 200);

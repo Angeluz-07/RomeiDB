@@ -26,8 +26,8 @@ import javafx.scene.layout.*;
  */
 public class TabRegister extends Tab {
     VBox container;
-    DatePicker datePicker=new DatePicker();
-    static TableView<Register> registerTable=new TableView(RegisterTableUtil.getRegisterList());   
+    static DatePicker datePicker=new DatePicker();
+    static TableView<Register> registerTable=new TableView(RegisterTableUtil.getRegListToRegister());   
     static Label totalValLabel;
     Button newRegB;
     Button saveRegB;
@@ -65,7 +65,7 @@ public class TabRegister extends Tab {
         buttonsContainer.setSpacing(10);
         newRegB= new Button("Nuevo Registro");      
         newRegB.setOnAction(e->{    
-            registerTable.setItems(RegisterTableUtil.getRegisterList());            
+            registerTable.setItems(RegisterTableUtil.getRegListToRegister());            
         });
         saveRegB= new Button("Guardar");        
         

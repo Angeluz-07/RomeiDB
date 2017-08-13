@@ -10,6 +10,8 @@ package databaseproject;
  * @author User
  */
 public class Register {
+    /* i set the date as a string to put that value in db*/
+    String date;
     int addedOrRemovedStock;
     Product product;
     int initialStock;
@@ -23,6 +25,12 @@ public class Register {
         this.product = product;
         this.initialStock=initialStock;
     }
+    public Register(String date,Product product, int quantitySold, double cashSale) {
+        this.date = date;
+        this.product = product;
+        this.quantitySold = quantitySold;
+        this.cashSale = cashSale;
+    }
     public Register(int addedOrRemovedStock,Product product, int initialStock, int finalStock, int quantitySold, double cashSale) {
         this.addedOrRemovedStock = addedOrRemovedStock;
         this.product = product;
@@ -31,8 +39,15 @@ public class Register {
         this.quantitySold = quantitySold;
         this.cashSale = cashSale;
     }
-    
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+        
     public int getAddedOrRemovedStock() {
         return addedOrRemovedStock;
     }
@@ -99,7 +114,7 @@ public class Register {
     
     @Override
     public String toString() {
-        return "Register{" + "addedOrRemovedStock=" + addedOrRemovedStock + ", initialStock=" + initialStock + ", finalStock=" + finalStock + ", quantitySold=" + quantitySold + ", cashSale=" + cashSale + '}';
+        return "Register{" +"date=" + date + ", addedOrRemovedStock=" + addedOrRemovedStock + ", initialStock=" + initialStock + ", finalStock=" + finalStock + ", quantitySold=" + quantitySold + ", cashSale=" + cashSale + '}';
     }
   
     

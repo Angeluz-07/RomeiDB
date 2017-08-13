@@ -22,7 +22,7 @@ import javafx.util.converter.IntegerStringConverter;
 public class AddProductTableUtil {
     
     /* Returns an observable list. for now just one Product(empty) */
-    public static ObservableList<Product> getRegisterList() {       
+    public static ObservableList<Product> getProductList() {       
         ObservableList<Product> products=FXCollections.observableArrayList();        
         Product p = new Product();
         products.add(p);        

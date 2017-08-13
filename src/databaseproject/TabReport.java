@@ -22,44 +22,37 @@ import javafx.scene.layout.VBox;
  *
  * @author User
  */
-public class TabAddNewProduct extends Tab {
-    VBox container;
-    DatePicker datePicker=new DatePicker();
-    static TableView<Product> addProductTable=new TableView(AddProductTableUtil.getProductList());       
-    //new Product button and save product
-    Button newProdB;
-    Button saveProdB;
-        
-    public TabAddNewProduct(String text){
+public class TabReport extends Tab {
+    VBox container;      
+    static TableView<Register> reportTable=new TableView(RegisterTableUtil.getRegListToReport());       
+    //generate report Button
+    Button genReportB;
+    //DatePicker datePicker=new DatePicker();        
+    public TabReport(String text){
         this.setText(text);   
         init();
     }
     private void init(){
-        datePicker.setValue(LocalDate.now());
-        datePicker.setEditable(false);  
+        //datePicker.setValue(LocalDate.now());
+        //datePicker.setEditable(false);
                 
-        addProductTable.setMinWidth(620);
-        addProductTable.setEditable(true);
+        reportTable.setMinWidth(620);
         
-        addProductTable.getColumns().addAll(AddProductTableUtil.getNameOfProductColumn(),
-                                            AddProductTableUtil.getPriceColumn(),
-                                            AddProductTableUtil.getQuantityColumn());
+        reportTable.getColumns().addAll(RegisterTableUtil.getDateColumn(),
+                                        RegisterTableUtil.getQuantitySoldColumn(),
+                                        RegisterTableUtil.getCashSaleColumn());
         
         container =new VBox();                
-        container.getChildren().addAll(datePicker,addProductTable);                
+        container.getChildren().addAll(reportTable);                
                 
         HBox buttonsContainer=new HBox(); 
         buttonsContainer.setAlignment(Pos.CENTER);
         buttonsContainer.setPadding(new Insets(10,10,10,10));               
         buttonsContainer.setSpacing(10);
         
-        newProdB= new Button("Nuevo Producto");      
-        newProdB.setOnAction(e->{    
-            addProductTable.setItems(AddProductTableUtil.getProductList());            
-        });
-        saveProdB= new Button("Guardar");        
-        
-        buttonsContainer.getChildren().addAll(newProdB,saveProdB);
+        genReportB= new Button("Nuevo Producto");      
+                      
+        buttonsContainer.getChildren().addAll(genReportB);
         
         container.getChildren().addAll(buttonsContainer);        
         this.setContent(container);       
