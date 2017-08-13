@@ -12,6 +12,7 @@ package databaseproject;
 public class Product {
     String name;
     double price;
+    int quantity;
 
     public Product() {
     }
@@ -35,6 +36,14 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     @Override

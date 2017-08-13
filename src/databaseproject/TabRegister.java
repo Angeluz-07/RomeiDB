@@ -25,9 +25,12 @@ import javafx.scene.layout.*;
  * @author User
  */
 public class TabRegister extends Tab {
+    VBox container;
     DatePicker datePicker=new DatePicker();
     static TableView<Register> registerTable=new TableView(RegisterTableUtil.getRegisterList());   
     static Label totalValLabel;
+    Button newRegB;
+    Button saveRegB;
     
     public TabRegister(String text){
         this.setText(text);   
@@ -46,7 +49,7 @@ public class TabRegister extends Tab {
                                           RegisterTableUtil.getQuantitySoldColumn(),
                                           RegisterTableUtil.getCashSaleColumn());
         
-        VBox container =new VBox();                
+        container =new VBox();                
         container.getChildren().addAll(datePicker,registerTable);                
         
         HBox resultContainer=new HBox();                
@@ -60,15 +63,15 @@ public class TabRegister extends Tab {
         buttonsContainer.setAlignment(Pos.CENTER);
         buttonsContainer.setPadding(new Insets(10,10,10,10));       
         buttonsContainer.setSpacing(10);
-        Button newRegB= new Button("Nuevo Registro");      
+        newRegB= new Button("Nuevo Registro");      
         newRegB.setOnAction(e->{    
             registerTable.setItems(RegisterTableUtil.getRegisterList());            
         });
-        Button saveRegB= new Button("Guardar");        
+        saveRegB= new Button("Guardar");        
+        
         buttonsContainer.getChildren().addAll(newRegB,saveRegB);
         
-        container.getChildren().addAll(resultContainer,buttonsContainer);
-        
+        container.getChildren().addAll(resultContainer,buttonsContainer);        
         this.setContent(container);
     }
 

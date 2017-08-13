@@ -24,6 +24,8 @@ public class RegisterTableUtil {
     public static ObservableList<Register> getRegisterList() {       
         ObservableList<Register> registers=FXCollections.observableArrayList();        
         
+        //exists a register object to be loaded, by each product.
+        
         //now i create the register just with the initial stock
         Register r1 = new Register(new Product("Pantalon",10),20);
         Register r2 = new Register(new Product("Pantalon",13),30);
@@ -48,54 +50,21 @@ public class RegisterTableUtil {
         /*below the parameter is the name of the
           attribute in the class Register*/
         addedOrRemovedStockCol.setCellValueFactory(new PropertyValueFactory<>("addedOrRemovedStock"));
-        //string converter
+        //make editable with text field
         addedOrRemovedStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));              
 
         addedOrRemovedStockCol.setId("addedOrRemovedStockColID");
         //updateCell is an event of CellEditEvent type
-        addedOrRemovedStockCol.setOnEditCommit(new EditCellHandler(addedOrRemovedStockCol));        
+        addedOrRemovedStockCol.setOnEditCommit(updateCell->updateRegisterTable(updateCell));        
         return  addedOrRemovedStockCol;
     }
-    
-    private static class EditCellHandler implements EventHandler<CellEditEvent<Register,Integer>>{
-        //coll could be addedOrRemoveStockCol or finalStock 
-        TableColumn<Register, Integer> col;
-        //I pass the column where the cell was edited
-        public EditCellHandler(TableColumn<Register, Integer> col){            
-            this.col=col;            
-        }
-        @Override
-        public void handle(CellEditEvent updateCell){
-            //this line gets the Register Object asociated with cell selected by the user                                   
-            Register r=col.getTableView().getSelectionModel().getSelectedItem();                                   
-            switch(col.getId()){
-                case "addedOrRemovedStockColID":
-                    r.setAddedOrRemovedStock((Integer)updateCell.getNewValue());
-                    break;
-                case "finalStockColID":
-                    r.setFinalStock((Integer)updateCell.getNewValue());
-                    break;
-            }            
-            r.computeQuantitySold();
-            r.computeCashSales();
-            
-            ObservableList<Register> registers=col.getTableView().getItems();        
-            System.out.println(sumCashSales(registers));                        
-            
-            TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
-            col.getTableView().refresh();
-            System.out.println(r.toString());
-        }
-    }
-    
-    
+                
     /* Returns Product TableColumn */
     public static TableColumn<Register, Product> getProductColumn() {
         TableColumn<Register, Product> productCol = new TableColumn<>("Producto");
         productCol.setCellValueFactory(new PropertyValueFactory<>("product"));
         //not editable
-        productCol.setEditable(false);
-        
+        productCol.setEditable(false);        
         return productCol;
     }
     
@@ -118,7 +87,7 @@ public class RegisterTableUtil {
         
         finalStockCol.setId("finalStockColID");
         //updateCell is an event of CellEditEvent type        
-        finalStockCol.setOnEditCommit(new EditCellHandler(finalStockCol));
+        finalStockCol.setOnEditCommit(updateCell->updateRegisterTable(updateCell));
         return finalStockCol;
     }
     
@@ -140,7 +109,33 @@ public class RegisterTableUtil {
         
         return cashSaleCol;
     }
+        
     
+    private static void updateRegisterTable(CellEditEvent updateCell){
+        //this line gets the register Object asociated with cell selected by the user                                                                       
+        Register r=(Register)updateCell.getTableView().getSelectionModel().getSelectedItem();                                   
+        //get the column the event ocurred and get its id
+        switch(updateCell.getTableColumn().getId()){
+            case "addedOrRemovedStockColID":
+                r.setAddedOrRemovedStock((Integer)updateCell.getNewValue());
+                break;
+            case "finalStockColID":
+                r.setFinalStock((Integer)updateCell.getNewValue());
+                break;
+        }
+        r.computeQuantitySold();
+        r.computeCashSales();
+        
+        /*get all the Register Objects to compute 
+          the sum of cash sales */
+        ObservableList<Register> registers=updateCell.getTableView().getItems();        
+        System.out.println(sumCashSales(registers));                        
+
+        TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
+        
+        updateCell.getTableView().refresh();
+        System.out.println(r.toString());        
+    }    
     
     public static double sumCashSales(ObservableList<Register> registers){
      double s=0;
