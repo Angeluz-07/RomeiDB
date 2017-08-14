@@ -13,10 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-/**
- *
- * @author User
- */
+
 public class RomeiDB extends Application {
     
     @Override

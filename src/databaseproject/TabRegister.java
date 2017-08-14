@@ -5,19 +5,8 @@
  */
 package databaseproject;
 import java.time.LocalDate;
-import java.util.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.GridPane;
+import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 /**

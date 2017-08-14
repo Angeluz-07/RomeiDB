@@ -7,27 +7,31 @@ package databaseproject;
 
 import static databaseproject.TabRegister.registerTable;
 import java.time.LocalDate;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
-/**
- *
- * @author User
- */
+
 public class TabReport extends Tab {
     VBox container;      
     static TableView<Register> reportTable=new TableView(RegisterTableUtil.getRegListToReport());       
     //generate report Button
     Button genReportB;
-    //DatePicker datePicker=new DatePicker();        
+       
+    HBox saleRateContainer;
+    Label saleRateTag;
+    Label saleRateLabel;
+    
+    HBox productContainer;
+    Label productTag;
+    ComboBox<Product> productComboBox;
+    
+    HBox dateContainer;
+    Label dateTag;
+    Label dashTag;
+    DatePicker dateIni=new DatePicker();
+    DatePicker dateFin=new DatePicker();
+    
     public TabReport(String text){
         this.setText(text);   
         init();
@@ -35,22 +39,48 @@ public class TabReport extends Tab {
     private void init(){
         //datePicker.setValue(LocalDate.now());
         //datePicker.setEditable(false);
-                
-        reportTable.setMinWidth(620);
+        container =new VBox(); 
         
+        reportTable.setMinWidth(620);        
         reportTable.getColumns().addAll(RegisterTableUtil.getDateColumn(),
                                         RegisterTableUtil.getQuantitySoldColumn(),
                                         RegisterTableUtil.getCashSaleColumn());
         
-        container =new VBox();                
-        container.getChildren().addAll(reportTable);                
+                             
+        saleRateContainer=new HBox();        
+        saleRateTag=new Label("Tasa de venta : ");
+        saleRateLabel=new Label("   ");
+        saleRateContainer.getChildren().addAll(saleRateTag,saleRateLabel);
+        saleRateContainer.setAlignment(Pos.CENTER);
+        
+        
+        productContainer=new HBox();
+        productTag=new Label("Producto : ");
+        productComboBox=new ComboBox();
+        productComboBox.setPromptText("Elija un producto");
+        //the next line should be replaced with a db access
+        productComboBox.getItems().addAll(new Product("Pantalon",10),
+                                          new Product("Short",6),
+                                          new Product("Pantalon",13));
+        productContainer.getChildren().addAll(productTag,productComboBox);
+        productContainer.setAlignment(Pos.CENTER);
+      
+        dateContainer=new HBox();
+        dateTag=new Label("Entre : ");
+        dashTag=new Label(" - ");
+        dateIni.setValue(LocalDate.now());
+        dateFin.setValue(LocalDate.now());
+        dateContainer.getChildren().addAll(dateTag,dateIni,dashTag,dateFin);
+        dateContainer.setAlignment(Pos.CENTER);
+        
+        container.getChildren().addAll(reportTable,saleRateContainer,productContainer,dateContainer);                
                 
         HBox buttonsContainer=new HBox(); 
         buttonsContainer.setAlignment(Pos.CENTER);
         buttonsContainer.setPadding(new Insets(10,10,10,10));               
         buttonsContainer.setSpacing(10);
         
-        genReportB= new Button("Nuevo Producto");      
+        genReportB= new Button("Nuevo Reporte");      
                       
         buttonsContainer.getChildren().addAll(genReportB);
         
