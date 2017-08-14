@@ -23,15 +23,13 @@ public class RegisterTableUtil {
     
     /* Returns an observable list of registers to TAB REGISTER*/
     public static ObservableList<Register> getRegListToRegister() {       
-        ObservableList<Register> registers=FXCollections.observableArrayList();        
-        
-        //exists a register object to be loaded, by each product.
-        
-        //now i create the register just with the initial stock
-        Register r1 = new Register(new Product("Pantalon",10),20);
-        Register r2 = new Register(new Product("Pantalon",13),30);
-        Register r3 = new Register(new Product("Short",6),15);               
-        registers.addAll(r1,r2,r3);        
+        ObservableList<Register> registers=FXCollections.observableArrayList();                
+        /* Load an array of Registers from db.
+           Exist one by each product in the db.
+           and its about the date before. that the
+           day presented in the app.
+        */           
+        registers.addAll(MySqlUtil.getInfoDayBefore("2017-08-13"));              
         return registers;
     }
     

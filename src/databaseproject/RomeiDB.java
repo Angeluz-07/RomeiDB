@@ -14,8 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 
-public class RomeiDB extends Application {
-    
+public class RomeiDB extends Application {    
     @Override
     public void start(Stage primaryStage) {       
         PaneOrg app=new PaneOrg();
