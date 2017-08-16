@@ -14,7 +14,7 @@ import javafx.scene.layout.*;
 
 public class TabReport extends Tab {
     VBox container;      
-    static TableView<Register> reportTable=new TableView(RegisterTableUtil.getRegListToReport());       
+    static TableView<Register> reportTable;    
     //generate report Button
     Button genReportB;
        
@@ -37,6 +37,7 @@ public class TabReport extends Tab {
         init();
     }
     private void init(){
+        reportTable=new TableView(RegisterTableUtil.getRegListToReport());
         //datePicker.setValue(LocalDate.now());
         //datePicker.setEditable(false);
         container =new VBox(); 

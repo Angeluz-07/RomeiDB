@@ -5,6 +5,13 @@
  */
 package databaseproject;
 
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -26,10 +33,11 @@ public class RegisterTableUtil {
         ObservableList<Register> registers=FXCollections.observableArrayList();                
         /* Load an array of Registers from db.
            Exist one by each product in the db.
-           and its about the date before. that the
-           day presented in the app.
+           and it's about the day before of the day 
+           presented in app.
+           WARNING
         */           
-        registers.addAll(MySqlUtil.getInfoDayBefore("2017-08-13"));              
+        registers.addAll(MySqlUtil.getInfoLastRegister());              
         return registers;
     }
     
@@ -146,8 +154,9 @@ public class RegisterTableUtil {
             case "finalStockColID":
                 r.setFinalStock((Integer)updateCell.getNewValue());
                 break;
-        }
-        r.setDate(TabRegister.datePicker.getEditor().getText());
+        }      
+        String dateNonFormatted=TabRegister.datePicker.getEditor().getText();
+        r.setDate(setDateFormat(dateNonFormatted));
         r.computeQuantitySold();
         r.computeCashSales();
         
@@ -155,7 +164,7 @@ public class RegisterTableUtil {
           the sum of cash sales */
         ObservableList<Register> registers=updateCell.getTableView().getItems();        
         System.out.println(sumCashSales(registers));                        
-
+       
         TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
         
         updateCell.getTableView().refresh();
@@ -169,5 +178,24 @@ public class RegisterTableUtil {
      }
      return s;
     }
+        
+    public static String setDateFormat(String date){
+            /* i get an date string as "14/08/2017" */            
+            DateFormat to= new SimpleDateFormat("yyyy-MM-dd");//wanted format
+            DateFormat from=new SimpleDateFormat("dd/MM/yyyy");//current format            
+            String dateFormatted=null;
+            try{
+                dateFormatted=to.format(from.parse(date));    
+            }catch(ParseException e){                
+                System.out.println(e);
+            }
+            return dateFormatted;
+    }
 }
 
+
+
+        //here i get the date
+        //14/08/2017
+        //String strDate=TabRegister.datePicker.getEditor().getText();
+        

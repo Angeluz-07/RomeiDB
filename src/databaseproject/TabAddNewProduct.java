@@ -18,7 +18,7 @@ import javafx.scene.layout.*;
 public class TabAddNewProduct extends Tab {
     VBox container;
     DatePicker datePicker=new DatePicker();
-    static TableView<Product> addProductTable=new TableView(AddProductTableUtil.getProductList());       
+    static TableView<Product> addProductTable;       
     //new Product button and save product
     Button newProdB;
     Button saveProdB;
@@ -28,6 +28,7 @@ public class TabAddNewProduct extends Tab {
         init();
     }
     private void init(){
+        addProductTable=new TableView(AddProductTableUtil.getProductList());
         datePicker.setValue(LocalDate.now());
         datePicker.setEditable(false);  
                 
