@@ -60,8 +60,8 @@ public class Login {
         GridPane.setConstraints(hbBtn, 1, 4);        
         
         loginButton.setOnAction(e->{            
-            boolean userIsValid=true;
-            //boolean userIsValid=Login.validateLogin(Login.nameInput.getText(),Login.passInput.getText());
+            //boolean userIsValid=true;
+            boolean userIsValid=Login.validateLogin(Login.nameInput.getText(),Login.passInput.getText());
             if(userIsValid){                              
                 PaneOrg a=new PaneOrg();
                 RomeiDB.sceneApp=new Scene(a.getRoot(),820,600);

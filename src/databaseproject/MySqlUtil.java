@@ -52,7 +52,7 @@ public class MySqlUtil {
         it gives nombre, producto, stockAlInicio
         trough a store procedure, previously created
       */
-      String sql="call getInfoDayBefore()";      
+      String sql="call getInfoLastRegister()";      
       
       // preparo la sentencia que voy a ejecutar
       System.out.println("Cooking the statement...");
@@ -64,9 +64,13 @@ public class MySqlUtil {
       // itero los resultados              
       while(rs.next()){
         //Retrieve data row by row        
-        String nameOfProduct=rs.getString("Nombre");
-        double price=rs.getDouble("Precio");
-        int initialStock=rs.getInt("StockAlInicio");
+        String productName=rs.getString("ProductName");
+        double price=rs.getDouble("Price");
+        /* Remember, from db you retrive the final stock
+           that was stored in the last register. That
+           value is now gonna be your initial stock ;)
+        */
+        int initialStock=rs.getInt("FinalStock");
         
         //Create objects with data obtained
         //initialize objects
@@ -74,7 +78,7 @@ public class MySqlUtil {
         productTemp=new Product();
          
         //set the values
-         productTemp.setName(nameOfProduct);
+         productTemp.setName(productName);
          productTemp.setPrice(price);
          registerTemp.setInitialStock(initialStock);         
          
@@ -125,7 +129,7 @@ public class MySqlUtil {
       // -------------
       //defino un query      
     
-      String sql="select nombre,password from usuario where nombre=? and password=?";           
+      String sql="select UserName,Password from users where UserName=? and Password=?";           
       // preparo la sentencia que voy a ejecutar
       System.out.println("Cooking the statement...");
       pstm = conn.prepareStatement(sql);
@@ -134,9 +138,9 @@ public class MySqlUtil {
       // ejecuto la sentencia y obtengo los resultados en rs      
       rs = pstm.executeQuery();
       
-      // itero los resultados              
+      //if there is a result it means the data is in db
       if(rs.next()){
-          System.out.println(rs.getString("nombre")+" "+rs.getString("password"));
+          System.out.println(rs.getString("UserName")+" "+rs.getString("Password"));
           exist=true;
       }else{
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
