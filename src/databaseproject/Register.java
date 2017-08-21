@@ -40,6 +40,12 @@ public class Register {
         this.cashSale = cashSale;
     }
 
+    public Register(String date, int quantitySold, double cashSale) {
+        this.date = date;
+        this.quantitySold = quantitySold;
+        this.cashSale = cashSale;
+    }
+
     public String getDate() {
         return date;
     }

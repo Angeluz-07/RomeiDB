@@ -5,11 +5,18 @@
  */
 package databaseproject;
 
+import static databaseproject.MySqlUtil.personIsInDB;
+import static databaseproject.Utils.showErrorDialog;
+import static databaseproject.Utils.thereAreEmptyFields;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -27,6 +34,8 @@ public class Login {
     static TextField passInput;
     static TextField nameInput;
     static Button loginButton;
+    
+    static ArrayList<String> fields;
     
     public Login(){
         //GridPane with 10px padding around edge
@@ -48,7 +57,7 @@ public class Login {
         GridPane.setConstraints(passLabel, 0, 2);
 
         //Password Input
-        passInput = new TextField();
+        passInput = new PasswordField();      
         passInput.setPromptText("contraseña");
         GridPane.setConstraints(passInput, 1, 2);
 
@@ -59,14 +68,23 @@ public class Login {
         hbBtn.getChildren().add(loginButton);
         GridPane.setConstraints(hbBtn, 1, 4);        
         
+        
         loginButton.setOnAction(e->{            
-            //boolean userIsValid=true;
-            boolean userIsValid=Login.validateLogin(Login.nameInput.getText(),Login.passInput.getText());
-            if(userIsValid){                              
-                PaneOrg a=new PaneOrg();
-                RomeiDB.sceneApp=new Scene(a.getRoot(),820,600);
-                RomeiDB.sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());               
-                RomeiDB.window.setScene(RomeiDB.sceneApp);                
+            //add all the fields to the array fields'
+            fields=new ArrayList();
+            Collections.addAll(fields,nameInput.getText(),passInput.getText());        
+            String query="select UserID,UserName,Password from users where UserName=? and Password=?";                                 
+            if(!thereAreEmptyFields(fields,actiontarget)){
+                if(!personIsInDB(fields,query,"Login.java").isEmpty()){                 
+                    System.out.println(personIsInDB(fields,query,"Login.java").toString());
+                    TabRegister.userID=Integer.parseInt(personIsInDB(fields,query,"").get(0));
+                    PaneOrg a=new PaneOrg();
+                    RomeiDB.sceneApp=new Scene(a.getRoot(),820,600);
+                    RomeiDB.sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());               
+                    RomeiDB.window.setScene(RomeiDB.sceneApp);                
+                }else{
+                    showErrorDialog("No existe el usuario.");
+                }   
             }
         });
                
@@ -76,21 +94,9 @@ public class Login {
         //Add everything to grid
         loginPane.getChildren().addAll(nameLabel, nameInput, passLabel, passInput, hbBtn,actiontarget);       
         loginPane.setAlignment(Pos.CENTER);
-        System.out.println(loginPane.getParent());
+        //loginPane.setStyle("-fx-background-color: linear-gradient(to bottom left,#cc5333,#23074d)");   
     }
-    public static boolean validateLogin(String nameInput,String passInput){
-        
-        //if filled the two fields...
-        if(!nameInput.isEmpty()&&!passInput.isEmpty()){                         
-            actiontarget.setText("");
-            //the method below returns a boolean, I just return it again
-            return MySqlUtil.checkLogin(nameInput, passInput);                                             
-        }else{
-            actiontarget.setFill(Color.FIREBRICK);
-            actiontarget.setText("Ingrese todos los campos");
-            return false;
-        }   
-    }
+    
     public GridPane getLoginPane() {
         return loginPane;
     }

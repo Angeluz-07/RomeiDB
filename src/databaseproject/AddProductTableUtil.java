@@ -72,7 +72,7 @@ public class AddProductTableUtil {
         return  priceCol;
     }
     
-     /* Returns Price TableColumn */
+     /* Returns Quantity TableColumn */
     public static  TableColumn<Product, Integer> getQuantityColumn() {
         TableColumn<Product, Integer> quantityCol = new TableColumn<>("Cantidad");                
         /*below the parameter is the name of the

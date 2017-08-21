@@ -4,8 +4,15 @@
  * and open the template in the editor.
  */
 package databaseproject;
+import static databaseproject.Utils.setDateFormat;
+import static databaseproject.Utils.showErrorDialog;
+import static databaseproject.Utils.showInfoDialog;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -20,9 +27,16 @@ public class TabRegister extends Tab {
     static Label totalValLabel;
     Button newRegB;
     Button saveRegB;
+        
+    static int userID; 
+    static ArrayList<Object> data;
     
     public TabRegister(String text){
-        this.setText(text);   
+        Label l = new Label(text);
+        l.setRotate(90);
+        StackPane stp = new StackPane(new Group(l));
+        stp.setRotate(90);
+        this.setGraphic(stp); 
         init();
     }
     private void init(){        
@@ -58,6 +72,38 @@ public class TabRegister extends Tab {
             registerTable.setItems(RegisterTableUtil.getRegListToRegister());            
         });
         saveRegB= new Button("Guardar");        
+        saveRegB.setOnAction(e->{
+            ObservableList<Register> registers=registerTable.getItems();                                      
+            Register r;
+            boolean flag=true;
+            String query="";
+            query+="insert into Registers (UserID,RegisterDate,ProductPriceID,InitialStock,FinalStock,QuantitySold,CashSale)";    
+            query+="values(?,?,?,?,?,?,?)";
+            for(int i=0;i<registers.size();i++){
+                data=new ArrayList();                    
+                r=registers.get(i);
+                Collections.addAll(data,userID,
+                                        setDateFormat(datePicker.getEditor().getText()),
+                                        r.getProduct().getProductPriceID(),
+                                        r.getInitialStock(),
+                                        r.getFinalStock(),
+                                        r.getQuantitySold(),
+                                        r.getCashSale(),
+                                        r.getAddedOrRemovedStock());                
+                flag=MySqlUtil.insertData(data.subList(0, 7),query,"TabRegister to insert registers");
+                if(r.getAddedOrRemovedStock()!=0){          
+                    String query2="";
+                    query2+="call insertAORS(?)"; 
+                    flag=MySqlUtil.insertData(data.subList(7, 8), query2, "TabRegister to insert AORStock");
+                }
+                if(!flag){
+                  showErrorDialog("Un error ocurrio durante la transaccion");                    
+                  break;
+                }
+            }
+            if(flag) showInfoDialog("La operacion se realizo con exito!");      
+            else    showErrorDialog("Un error ocurrio durante la transaccion");                    
+        });
         
         buttonsContainer.getChildren().addAll(newRegB,saveRegB);
         

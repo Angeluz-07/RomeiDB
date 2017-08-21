@@ -6,8 +6,12 @@
 package databaseproject;
 
 import static databaseproject.TabRegister.registerTable;
+import static databaseproject.Utils.setDateFormat;
 import java.time.LocalDate;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -33,11 +37,15 @@ public class TabReport extends Tab {
     DatePicker dateFin=new DatePicker();
     
     public TabReport(String text){
-        this.setText(text);   
+        Label l = new Label(text);
+        l.setRotate(90);
+        StackPane stp = new StackPane(new Group(l));
+        stp.setRotate(90);
+        this.setGraphic(stp);   
         init();
     }
     private void init(){
-        reportTable=new TableView(RegisterTableUtil.getRegListToReport());
+        reportTable=new TableView(RegisterTableUtil.getRegListToRegister());
         //datePicker.setValue(LocalDate.now());
         //datePicker.setEditable(false);
         container =new VBox(); 
@@ -60,9 +68,7 @@ public class TabReport extends Tab {
         productComboBox=new ComboBox();
         productComboBox.setPromptText("Elija un producto");
         //the next line should be replaced with a db access
-        productComboBox.getItems().addAll(new Product("Pantalon",10),
-                                          new Product("Short",6),
-                                          new Product("Pantalon",13));
+        productComboBox.getItems().addAll(MySqlUtil.getCurrentProducts());
         productContainer.getChildren().addAll(productTag,productComboBox);
         productContainer.setAlignment(Pos.CENTER);
       
@@ -81,7 +87,19 @@ public class TabReport extends Tab {
         buttonsContainer.setPadding(new Insets(10,10,10,10));               
         buttonsContainer.setSpacing(10);
         
-        genReportB= new Button("Nuevo Reporte");      
+        genReportB= new Button("Generar Reporte");      
+        genReportB.setOnAction(e->{
+            String dateIniFormatted=setDateFormat(dateIni.getEditor().getText());            
+            String dateFinFormatted=setDateFormat(dateFin.getEditor().getText());           
+            
+            ObservableList<Register> registers=FXCollections.observableArrayList();        
+            Product p= productComboBox.getValue();
+            registers.addAll(MySqlUtil.getRegToReport(dateIniFormatted,
+                                                      dateFinFormatted,
+                                                      p));            
+            reportTable.setItems(registers);
+            if(!registers.isEmpty()) reportTable.refresh();
+        });
                       
         buttonsContainer.getChildren().addAll(genReportB);
         

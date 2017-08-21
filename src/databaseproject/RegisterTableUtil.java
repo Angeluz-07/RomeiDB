@@ -5,6 +5,7 @@
  */
 package databaseproject;
 
+import static databaseproject.Utils.*;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,21 +38,18 @@ public class RegisterTableUtil {
            presented in app.
            WARNING
         */           
-        registers.addAll(MySqlUtil.getInfoLastRegister());              
+        registers.addAll(MySqlUtil.getRegToReg());              
         return registers;
     }
     
     /* Returns an observable list of registers to TAB REPORT*/
-    public static ObservableList<Register> getRegListToReport() {       
+    public static ObservableList<Register> getRegListToReport(String di,String df,Product p) {       
         ObservableList<Register> registers=FXCollections.observableArrayList();        
         
         //all the registers object that could be created over one Product       
-        //now i create the register in format to show on report
-        Register r1 = new Register("10/11/2008",new Product("Pantalon",10),10,300);
-        Register r2 = new Register("7/10/2009",new Product("Pantalon",10),5,50);
-        Register r3 = new Register("10/11/2008",new Product("Pantalon",6),8,80);
-        Register r4 = new Register("10/11/2010",new Product("Pantalon",6),7,70);                       
-        registers.addAll(r1,r2,r3,r4);        
+        //now i create the register in format to show on report       
+             
+        
         return registers;
     }
     
@@ -154,9 +152,7 @@ public class RegisterTableUtil {
             case "finalStockColID":
                 r.setFinalStock((Integer)updateCell.getNewValue());
                 break;
-        }      
-        String dateNonFormatted=TabRegister.datePicker.getEditor().getText();
-        r.setDate(setDateFormat(dateNonFormatted));
+        }             
         r.computeQuantitySold();
         r.computeCashSales();
         
@@ -177,20 +173,7 @@ public class RegisterTableUtil {
         s+=r.getCashSale();
      }
      return s;
-    }
-        
-    public static String setDateFormat(String date){
-            /* i get an date string as "14/08/2017" */            
-            DateFormat to= new SimpleDateFormat("yyyy-MM-dd");//wanted format
-            DateFormat from=new SimpleDateFormat("dd/MM/yyyy");//current format            
-            String dateFormatted=null;
-            try{
-                dateFormatted=to.format(from.parse(date));    
-            }catch(ParseException e){                
-                System.out.println(e);
-            }
-            return dateFormatted;
-    }
+    }            
 }
 
 

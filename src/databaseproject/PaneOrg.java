@@ -7,6 +7,7 @@ package databaseproject;
 
 import static databaseproject.RomeiDB.window;
 import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -19,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -34,13 +36,16 @@ public class PaneOrg {
     static Tab tabLogOut;
     private Login login;
     
+    
     public PaneOrg(){
         root=new BorderPane();
+        //root.setStyle("-fx-background-color: linear-gradient(to bottom left,#cc5333,#23074d)");
         tabPane=new TabPane();               
         
         //this block to close tabs
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        tabPane.setSide(Side.LEFT);              
+        tabPane.setSide(Side.LEFT);
+        tabPane.setRotateGraphic(true);
         
         //tabPane.setTabMinWidth(10);
         //tabPane.setTabMinHeight(200);
@@ -49,14 +54,29 @@ public class PaneOrg {
         
         //Creating tabs
         TabRegister tabRegister=new TabRegister("Registro");                    
-        TabAddNewProduct tabAddNewProduct=new TabAddNewProduct("Nuevo Producto");                               
+        TabAddProduct tabAddNewProduct=new TabAddProduct("Nuevo Producto");                               
         TabReport tabReport=new TabReport("Reporte");
         TabAddUser tabAddUser=new TabAddUser("Agregar Usuario");
-        tabPane.getTabs().addAll(tabRegister,tabAddNewProduct,tabReport,tabAddUser);        
-        tabExit= new Tab("Salir");   
-        tabExit.setOnSelectionChanged(e->window.close());
+        TabAddSupplier tabAddSupplier=new TabAddSupplier("Agregar Proveedor");
+        tabPane.getTabs().addAll(tabRegister,
+                                 tabAddNewProduct,
+                                 tabReport,
+                                 tabAddUser,
+                                 tabAddSupplier);        
+        tabExit= new Tab();   
+        Label l = new Label("Exit");
+        l.setRotate(90);
+        StackPane stp = new StackPane(new Group(l));
+        stp.setRotate(90);
+        tabExit.setGraphic(stp);
         
-        tabLogOut=new Tab("Cerrar Sesion");
+        tabLogOut=new Tab();        
+        Label l2 = new Label("Cerrar Sesion");
+        l2.setRotate(90);
+        StackPane stp2 = new StackPane(new Group(l2));
+        stp2.setRotate(90);
+        tabLogOut.setGraphic(stp2);
+        tabExit.setOnSelectionChanged(e->window.close());
         
         tabLogOut.setOnSelectionChanged(e->{
             Login log=new Login();
@@ -74,5 +94,6 @@ public class PaneOrg {
     public BorderPane getRoot() {
         return root;
     }
+    
     
 }

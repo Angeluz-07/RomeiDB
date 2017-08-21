@@ -13,6 +13,8 @@ public class Product {
     String name;
     double price;
     int quantity;
+    int productPriceID;
+    Supplier supplier;
 
     public Product() {
     }
@@ -20,6 +22,18 @@ public class Product {
     public Product(String name, double price) {
         this.name = name;
         this.price = price;
+    }
+    public Product(String name, double price, Supplier supplier) {
+        this.name = name;
+        this.price = price;
+        this.supplier=supplier;
+    }
+    
+    public Product(String name, double price, int productPriceID, Supplier supplier) {
+        this.name = name;
+        this.productPriceID=productPriceID;
+        this.price = price;
+        this.supplier=supplier;
     }
     
     public Product(String name) {
@@ -50,6 +64,22 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public int getProductPriceID() {
+        return productPriceID;
+    }
+
+    public void setProductPriceID(int productPriceID) {
+        this.productPriceID = productPriceID;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+ 
     @Override
     public String toString() {
         return name + " $" + price;

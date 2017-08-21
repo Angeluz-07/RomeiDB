@@ -5,10 +5,19 @@
  */
 package databaseproject;
 
+import static databaseproject.MySqlUtil.personIsInDB;
+import static databaseproject.Utils.bothFieldsEqual;
+import static databaseproject.Utils.showErrorDialog;
+import static databaseproject.Utils.showInfoDialog;
+import static databaseproject.Utils.thereAreEmptyFields;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import javafx.geometry.*;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 /**
@@ -26,13 +35,19 @@ public class TabAddUser extends Tab {
     static TextField userName;    
     
     static TextField passInput;
-    static TextField confirmPassInput;
-    static TextField passInputAdmin;  
+    static TextField confirmPassInput;  
     
     static Button saveButton;
                 
+    static ArrayList<String> fields;
+    static ArrayList<Object> data;
+    
     public TabAddUser(String text){
-        this.setText(text);   
+        Label l = new Label(text);
+        l.setRotate(90);
+        StackPane stp = new StackPane(new Group(l));
+        stp.setRotate(90);
+        this.setGraphic(stp);  
         init();
     }
     private void init(){        
@@ -86,21 +101,44 @@ public class TabAddUser extends Tab {
         confirmPassInput = new TextField();
         confirmPassInput.setPromptText("repita contraseña");
         GridPane.setConstraints(confirmPassInput, 1, 5);
-        
-        //confirm Password Label
-        Label passInputAdminLabel = new Label("Contraseña de Administrador:");
-        GridPane.setConstraints(passInputAdminLabel, 0, 6);
-        //confirm Password Input
-        passInputAdmin = new TextField();
-        passInputAdmin.setPromptText("contraseña Admin");
-        GridPane.setConstraints(passInputAdmin, 1, 6);
+                
 
         //save
         saveButton = new Button("Guardar");               
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(saveButton);
-        GridPane.setConstraints(hbBtn, 1, 7);        
+        GridPane.setConstraints(hbBtn, 1, 6);        
+        saveButton.setOnAction(e->{
+            fields=new ArrayList();
+            Collections.addAll(fields,firstName.getText(),
+                                      lastName.getText(),
+                                      userName.getText(),
+                                      passInput.getText(),
+                                      confirmPassInput.getText());
+            if(!thereAreEmptyFields(fields,actiontarget)){
+                if(bothFieldsEqual(fields.get(3),fields.get(4),actiontarget)){                     
+                    String query1="select FirstName,LastName,UserName from users where FirstName=? and LastName=? and UserName=?";                                             
+                    if(personIsInDB(fields.subList(0, 3),query1,"TabAddUsser.java to check if already exist user").isEmpty()){                                 
+                        data=new ArrayList();                        
+                        Collections.addAll(data,firstName.getText(),
+                                                lastName.getText(),
+                                                userName.getText(),                             
+                                                passInput.getText());
+                        String query2="";
+                        query2+="insert into Users (FirstName,LastName,UserName,Password)";    
+                        query2+="values(?,?,?,?) ";
+                        if(MySqlUtil.insertData(data,query2,"TabAddUser to insert user")){
+                            showInfoDialog("La operacion se realizo con exito!");      
+                        }else{
+                            showErrorDialog("Un error ocurrio durante la transaccion");
+                        }                            
+                    }else{                        
+                       showErrorDialog("El usuario ya esta registrado");
+                    }    
+                }
+            }
+        });
                
         actiontarget = new Text();
         GridPane.setConstraints(actiontarget, 1, 8);
@@ -108,8 +146,8 @@ public class TabAddUser extends Tab {
         //Add everything to grid
         addUserPane.getChildren().addAll(firstNameLabel,lastNameLabel,userNameLabel);
         addUserPane.getChildren().addAll(firstName,lastName,userName);
-        addUserPane.getChildren().addAll(passLabel,confirmPassLabel,passInputAdminLabel);
-        addUserPane.getChildren().addAll(passInput,confirmPassInput,passInputAdmin,hbBtn);    
+        addUserPane.getChildren().addAll(passLabel,confirmPassLabel);
+        addUserPane.getChildren().addAll(passInput,confirmPassInput,hbBtn,actiontarget);    
         addUserPane.setAlignment(Pos.CENTER);
                
         container.getChildren().add(addUserPane);

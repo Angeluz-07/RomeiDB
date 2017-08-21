@@ -23,9 +23,10 @@ public class RomeiDB extends Application {
     @Override
     public void start(Stage primaryStage) {       
         window=primaryStage;                               
+        window.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
         //PaneOrg app=new PaneOrg(); 
         Login login=new Login();
-        sceneLogIn = new Scene(login.getLoginPane(), 820, 600);               
+        sceneLogIn = new Scene(login.getLoginPane(), 820, 600);                      
         //sceneApp=new Scene(app.getRoot(),700,600);
         // I set this handler here, because from here
         
