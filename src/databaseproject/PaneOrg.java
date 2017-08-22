@@ -54,15 +54,21 @@ public class PaneOrg {
         
         //Creating tabs
         TabRegister tabRegister=new TabRegister("Registro");                    
-        TabAddProduct tabAddNewProduct=new TabAddProduct("Nuevo Producto");                               
-        TabReport tabReport=new TabReport("Reporte");
+        TabAddProduct tabAddNewProduct=new TabAddProduct("Agregar Producto");                               
+        TabReport tabReport=new TabReport("Reporte Ventas");
         TabAddUser tabAddUser=new TabAddUser("Agregar Usuario");
         TabAddSupplier tabAddSupplier=new TabAddSupplier("Agregar Proveedor");
+        TabModifyProduct tabModifyProduct=new TabModifyProduct("Modificar producto");
+        TabModifySupplier tabModifySupplier=new TabModifySupplier("Modificar proveedor");
+        TabModifyUser tabModifyUser=new TabModifyUser("Modificar Usuario");
         tabPane.getTabs().addAll(tabRegister,
-                                 tabAddNewProduct,
                                  tabReport,
+                                 tabAddNewProduct, 
+                                 tabModifyProduct,
                                  tabAddUser,
-                                 tabAddSupplier);        
+                                 tabModifyUser,
+                                 tabAddSupplier,
+                                 tabModifySupplier);        
         tabExit= new Tab();   
         Label l = new Label("Exit");
         l.setRotate(90);

@@ -18,12 +18,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import static databaseproject.MySqlUtil.dataIsInDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
  * @author User
  */
-public class TabAddSupplier extends Tab {
+public class TabModifySupplier extends Tab {
     static GridPane addSupplierPane;
     static Text title= new Text("Ingrese los datos");
     static VBox container;
@@ -32,11 +34,16 @@ public class TabAddSupplier extends Tab {
     static TextField contactName;
     static TextField phone;  
     
-    static Button saveButton;
+    static Button saveButton;    
+    static Button deleteButton;  
+    
     static ArrayList<Object> fields;
     static ArrayList<Object> data;
     
-    public TabAddSupplier(String text){          
+    ComboBox<Supplier> supplierComboBox;
+    static ArrayList<Supplier> suppliers=new ArrayList();
+     
+    public TabModifySupplier(String text){          
         Label l = new Label(text);
         l.setRotate(90);
         StackPane stp = new StackPane(new Group(l));
@@ -60,6 +67,26 @@ public class TabAddSupplier extends Tab {
         addSupplierPane.setVgap(10);
         addSupplierPane.setHgap(10);
 
+        supplierComboBox=new ComboBox();
+        supplierComboBox.setPromptText("Elija un proveedor");
+        //the next line should be replaced with a db access
+      
+        supplierComboBox.setOnShowing(e->{            
+            ObservableList<Supplier> suppliersToComboBox=FXCollections.observableArrayList();
+            suppliers=MySqlUtil.getCurrentSuppliers();
+            suppliersToComboBox.setAll(suppliers);
+            supplierComboBox.setItems(suppliersToComboBox);                   
+        }); 
+        
+        supplierComboBox.setOnHidden(e->{
+            Supplier chosenSupplier=supplierComboBox.getValue();
+            contactName.setText(chosenSupplier.getContactName());
+            phone.setText(chosenSupplier.getPhone());
+        }); 
+        GridPane.setConstraints(supplierComboBox, 3, 1);
+        
+        
+        
         //ContactName Label - constrains use (child, column, row)
         Label contactNameLabel = new Label("Nombre de Contacto:");     
         GridPane.setConstraints(contactNameLabel, 0, 1);
@@ -74,10 +101,35 @@ public class TabAddSupplier extends Tab {
         phone = new TextField();
         GridPane.setConstraints(phone, 1, 2);
         
-        //save
-        saveButton = new Button("Guardar");               
+        deleteButton = new Button("Borrar"); 
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(deleteButton); 
+        deleteButton.setOnAction(e->{
+            fields=new ArrayList();
+            Collections.addAll(fields,contactName.getText(),
+                                      phone.getText());
+            if(!thereAreEmptyFields(fields,actiontarget)){
+                String query1="select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";                                             
+                if(!dataIsInDB(fields.subList(0, 2),query1,"TabAddSupplier.java").isEmpty()){                                 
+                    data=new ArrayList();                    
+                    Collections.addAll(data,supplierComboBox.getValue().getSupplierID());                                                                               
+                    String query2="";
+                    query2+="call setStateSupplier(0,?)";
+                    if(MySqlUtil.queryWithData(data,query2,"TabAddSupplier on delete")){
+                        showInfoDialog("La operacion se realizo con exito!");      
+                    }else{
+                        showErrorDialog("Un error ocurrio durante la transaccion.");
+                    }
+                }else{                        
+                   showErrorDialog("El Proveedor no existe");
+                }                    
+            }
+        });
+            
+        
+        //save
+        saveButton = new Button("Guardar");   
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 3);        
         saveButton.setOnAction(e->{
@@ -85,16 +137,15 @@ public class TabAddSupplier extends Tab {
             Collections.addAll(fields,contactName.getText(),
                                       phone.getText());
             if(!thereAreEmptyFields(fields,actiontarget)){
-                String query1="select ContactName,phone from Suppliers where ContactName=? and inDB=1";                                             
-                if(dataIsInDB(fields.subList(0, 1),query1,"TabAddSupplier.java").isEmpty()){                                 
+                String query1="select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";                                             
+                if(dataIsInDB(fields.subList(0, 2),query1,"TabAddSupplier.java").isEmpty()){                                 
                     data=new ArrayList();                    
                     Collections.addAll(data,contactName.getText(),
-                                            phone.getText());
-                                        
+                                            phone.getText(),
+                                            supplierComboBox.getValue().getSupplierID());                                        
                     String query2="";
-                    query2+="insert into Suppliers(ContactName,Phone)";
-                    query2+="values(?,?) ";
-                    if(MySqlUtil.queryWithData(data,query2,"TabAddSupplier")){
+                    query2+="call updateSupplier(?,?,?)";
+                    if(MySqlUtil.queryWithData(data,query2,"TabAddSupplier on update")){
                         showInfoDialog("La operacion se realizo con exito!");      
                     }else{
                         showErrorDialog("Un error ocurrio durante la transaccion.");
@@ -112,6 +163,7 @@ public class TabAddSupplier extends Tab {
         addSupplierPane.getChildren().addAll(contactNameLabel,phoneLabel);
         addSupplierPane.getChildren().addAll(contactName,phone);
         addSupplierPane.getChildren().addAll(hbBtn,actiontarget);    
+        addSupplierPane.getChildren().add(supplierComboBox);
         addSupplierPane.setAlignment(Pos.CENTER);
                
         container.getChildren().add(addSupplierPane);

@@ -14,6 +14,7 @@ public class Product {
     double price;
     int quantity;
     int productPriceID;
+    int productID;
     Supplier supplier;
 
     public Product() {
@@ -29,9 +30,10 @@ public class Product {
         this.supplier=supplier;
     }
     
-    public Product(String name, double price, int productPriceID, Supplier supplier) {
+    public Product(String name, double price, int productPriceID,int productID, Supplier supplier) {
         this.name = name;
         this.productPriceID=productPriceID;
+        this.productID=productID;
         this.price = price;
         this.supplier=supplier;
     }
@@ -71,6 +73,15 @@ public class Product {
     public void setProductPriceID(int productPriceID) {
         this.productPriceID = productPriceID;
     }
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
+    
 
     public Supplier getSupplier() {
         return supplier;

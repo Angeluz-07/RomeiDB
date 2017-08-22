@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -20,9 +21,9 @@ import javafx.stage.Stage;
  * @author User
  */
 public class Utils {
-    public static boolean thereAreEmptyFields(ArrayList<String> fields,Text actiontarget){
-        for(String field:fields){
-            if(field.isEmpty()){ 
+    public static boolean thereAreEmptyFields(List<Object> fields,Text actiontarget){
+        for(Object field:fields){
+            if(((String)field).isEmpty()){ 
                 actiontarget.setFill(Color.FIREBRICK);
                 actiontarget.setText("Por favor ingrese todos los campos");            
                 return true;

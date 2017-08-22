@@ -244,7 +244,7 @@ public class MySqlUtil {
         
         //Create objects with data obtained      
         supplierTemp=new Supplier(supplierID,contactName);        
-        productTemp=new Product(productName,price,productPriceID,supplierTemp);       
+        productTemp=new Product(productName,price,productPriceID,productID,supplierTemp);       
         
         products.add(productTemp);
       }      
@@ -272,19 +272,161 @@ public class MySqlUtil {
    return products;
    }
    
+   public static ArrayList<Supplier> getCurrentSuppliers(){
+    Connection conn = null;
+    PreparedStatement pstm = null;
+    ResultSet rs = null;    
+    
+    /*Variables to create the objects*/              
+    ArrayList<Supplier> suppliers=new ArrayList();          
+    Supplier supplierTemp;
+    try{
+      // -------------
+      // ** PARTE 1 **
+      // -------------
+      // levanto el driver
+      Class.forName(JDBC_DRIVER);      
+      // establezco la conexion
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL,USER,PASS);     
+      
+      // -------------
+      // ** PARTE 2 **
+      // -------------
+      //defino un query      
+      /* 
+        it gives nombre, producto, stockAlInicio
+        trough a store procedure, previously created
+      */
+      String sql="select ";
+      sql+=" SupplierID,ContactName,Phone ";
+      sql+=" from Suppliers ";
+      sql+=" where inDB=1";      
+      
+      // preparo la sentencia que voy a ejecutar
+      System.out.println("Cooking the statement...");
+      pstm = conn.prepareStatement(sql);
+      
+      // ejecuto la sentencia y obtengo los resultados en rs      
+      rs = pstm.executeQuery();
+      
+      // itero los resultados              
+      while(rs.next()){
+        //Retrieve data row by row               
+        int supplierID=rs.getInt("SupplierID");
+        String contactName=rs.getString("ContactName");
+        String phone=rs.getString("Phone");
+        
+        //Create objects with data obtained      
+        supplierTemp=new Supplier(supplierID,contactName,phone);                
+        suppliers.add(supplierTemp);
+      }                  
+   }catch(Exception e){
+      e.printStackTrace();     
+      throw new RuntimeException(e);
+   }finally{
+      // -------------
+      // ** PARTE 3 **
+      // -------------
+      // cierro todos los recursos en orden inverso al que
+      // fueron adquiridos
+      try{
+        if( rs!=null ) rs.close();
+        if( pstm!=null ) pstm.close();     
+        if(conn!=null) conn.close();
+      }catch(Exception e){ 
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }//end finally try
+   }//end try   
+   System.out.println("Goodbye!"); 
+   return suppliers;
+   }
+   
+    public static ArrayList<User> getCurrentUsers(){
+    Connection conn = null;
+    PreparedStatement pstm = null;
+    ResultSet rs = null;    
+    
+    /*Variables to create the objects*/              
+    ArrayList<User> users=new ArrayList();          
+    User userTemp;
+    try{
+      // -------------
+      // ** PARTE 1 **
+      // -------------
+      // levanto el driver
+      Class.forName(JDBC_DRIVER);      
+      // establezco la conexion
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL,USER,PASS);     
+      
+      // -------------
+      // ** PARTE 2 **
+      // -------------
+      //defino un query      
+      /* 
+        it gives nombre, producto, stockAlInicio
+        trough a store procedure, previously created
+      */
+      
+      String sql="select ";
+      sql+=" UserID,FirstName,LastName,UserName,Password  ";
+      sql+=" from Users ";
+      sql+=" where inDB=1";      
+      
+      // preparo la sentencia que voy a ejecutar
+      System.out.println("Cooking the statement...");
+      pstm = conn.prepareStatement(sql);
+      
+      // ejecuto la sentencia y obtengo los resultados en rs      
+      rs = pstm.executeQuery();
+      
+      // itero los resultados              
+      while(rs.next()){
+        //Retrieve data row by row               
+        int uID=rs.getInt("UserID");
+        String firstName=rs.getString("firstName");
+        String lastName=rs.getString("LastName");
+        String userName=rs.getString("UserName");
+        String password=rs.getString("Password");
+        //Create objects with data obtained      
+        userTemp=new User(uID,firstName,lastName,userName,password);                
+        users.add(userTemp);
+      }                  
+   }catch(Exception e){
+      e.printStackTrace();     
+      throw new RuntimeException(e);
+   }finally{
+      // -------------
+      // ** PARTE 3 **
+      // -------------
+      // cierro todos los recursos en orden inverso al que
+      // fueron adquiridos
+      try{
+        if( rs!=null ) rs.close();
+        if( pstm!=null ) pstm.close();     
+        if(conn!=null) conn.close();
+      }catch(Exception e){ 
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }//end finally try
+   }//end try   
+    System.out.println("Goodbye!"); 
+    return users;
+   }
+   
+   
    /*
      return true if the field exist on db. 
-     THIS WORKS JUST WITH colums of varchar
      THE NUMBER OF ELEMENTS IN fields SHOULD
-     BE THE SAME AS THAT REQUIRED IN THE QUERY.
-     Argument 'place' is just to know where i called this
-     method from.
+     BE THE SAME AS THAT REQUIRED IN THE QUERY.   
    */
-   public static ArrayList<String> personIsInDB(List<String> fields,String query, String place){
+   public static List<Object> dataIsInDB(List<Object> fields,String query, String place){
     Connection conn = null;
     PreparedStatement pstm = null;
     ResultSet rs = null;       
-    ArrayList<String> result=new ArrayList();
+    List<Object> result=new ArrayList();
     try{
       // -------------
       // ** PARTE 1 **
@@ -306,7 +448,7 @@ public class MySqlUtil {
       
       for(int i=1;i<=fields.size();i++){
           //System.out.println(i+" "+fields.get(i-1));
-          pstm.setString(i,fields.get(i-1));       
+          pstm.setObject(i,fields.get(i-1));       
       }           
       // ejecuto la sentencia y obtengo los resultados en rs      
       rs = pstm.executeQuery();  
@@ -316,7 +458,7 @@ public class MySqlUtil {
       while(rs.next()){ 
           int i = 1;
           while(i <= columnCount) {
-            result.add(rs.getString(i++));
+            result.add(rs.getObject(i++));
           }        
       }      
    }catch(Exception e){
@@ -341,7 +483,7 @@ public class MySqlUtil {
    return result;
    }    
     
-    public static boolean insertData(List<Object> data,String query,String place){
+    public static boolean queryWithData(List<Object> data,String query,String place){
     Connection conn = null;
     PreparedStatement pstm = null;
     //ResultSet rs = null;           

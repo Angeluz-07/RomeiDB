@@ -90,11 +90,11 @@ public class TabRegister extends Tab {
                                         r.getQuantitySold(),
                                         r.getCashSale(),
                                         r.getAddedOrRemovedStock());                
-                flag=MySqlUtil.insertData(data.subList(0, 7),query,"TabRegister to insert registers");
+                flag=MySqlUtil.queryWithData(data.subList(0, 7),query,"TabRegister to insert registers");
                 if(r.getAddedOrRemovedStock()!=0){          
                     String query2="";
                     query2+="call insertAORS(?)"; 
-                    flag=MySqlUtil.insertData(data.subList(7, 8), query2, "TabRegister to insert AORStock");
+                    flag=MySqlUtil.queryWithData(data.subList(7, 8), query2, "TabRegister to insert AORStock");
                 }
                 if(!flag){
                   showErrorDialog("Un error ocurrio durante la transaccion");                    

@@ -5,7 +5,6 @@
  */
 package databaseproject;
 
-import static databaseproject.MySqlUtil.personIsInDB;
 import static databaseproject.Utils.showErrorDialog;
 import static databaseproject.Utils.thereAreEmptyFields;
 import java.sql.SQLException;
@@ -23,6 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import static databaseproject.MySqlUtil.dataIsInDB;
 
 /**
  *
@@ -35,7 +35,7 @@ public class Login {
     static TextField nameInput;
     static Button loginButton;
     
-    static ArrayList<String> fields;
+    static ArrayList<Object> fields;
     
     public Login(){
         //GridPane with 10px padding around edge
@@ -75,9 +75,9 @@ public class Login {
             Collections.addAll(fields,nameInput.getText(),passInput.getText());        
             String query="select UserID,UserName,Password from users where UserName=? and Password=?";                                 
             if(!thereAreEmptyFields(fields,actiontarget)){
-                if(!personIsInDB(fields,query,"Login.java").isEmpty()){                 
-                    System.out.println(personIsInDB(fields,query,"Login.java").toString());
-                    TabRegister.userID=Integer.parseInt(personIsInDB(fields,query,"").get(0));
+                if(!dataIsInDB(fields,query,"Login.java").isEmpty()){                 
+                    System.out.println(dataIsInDB(fields,query,"Login.java").toString());
+                    TabRegister.userID=(Integer)dataIsInDB(fields,query,"").get(0);
                     PaneOrg a=new PaneOrg();
                     RomeiDB.sceneApp=new Scene(a.getRoot(),820,600);
                     RomeiDB.sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());               

@@ -23,6 +23,11 @@ public class Supplier {
         this.contactName = contactName;
         this.phone = phone;
     }
+    public Supplier(int supplierID,String contactName, String phone) {
+        this.supplierID=supplierID;
+        this.contactName = contactName;
+        this.phone = phone;
+    }
     
     public Supplier(String contactName) {
         this.contactName = contactName;     
@@ -43,6 +48,16 @@ public class Supplier {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public int getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
+    }
+    
+    
      @Override
     public String toString() {
         return contactName;

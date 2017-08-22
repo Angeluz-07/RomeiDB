@@ -69,6 +69,11 @@ public class TabReport extends Tab {
         productComboBox.setPromptText("Elija un producto");
         //the next line should be replaced with a db access
         productComboBox.getItems().addAll(MySqlUtil.getCurrentProducts());
+        productComboBox.setOnShowing(e->{
+            ObservableList<Product> p=FXCollections.observableArrayList();
+            p.setAll(MySqlUtil.getCurrentProducts());
+            productComboBox.setItems(p);        
+        });      
         productContainer.getChildren().addAll(productTag,productComboBox);
         productContainer.setAlignment(Pos.CENTER);
       

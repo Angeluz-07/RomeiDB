@@ -10,11 +10,21 @@ package databaseproject;
  * @author User
  */
 public class User {
+     int userID;
      String firstName;
      String lastName;
      String userName;
      String password;
 
+    public User(int userID, String firstName, String lastName, String userName, String password) {
+        this.userID = userID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.password = password;
+    }
+
+     
     public User(String firstName,String lastName, String userName, String password) {
         this.firstName = firstName;
         this.lastName= lastName;
@@ -53,6 +63,18 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-     
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+    
+    @Override
+    public String toString(){
+        return userName;
+    }
  
 }
