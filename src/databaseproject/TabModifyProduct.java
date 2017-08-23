@@ -122,7 +122,7 @@ public class TabModifyProduct extends Tab {
             if(!thereAreEmptyFields(fields,actiontarget)){
                 String query1="call getProductWithPrice(?,?)";
                 if(!dataIsInDB(fields.subList(0, 2),query1,"check if the product doesn't exit").isEmpty()){
-                    String query2="select ContactName,phone from Suppliers where ContactName=?";                                             
+                    String query2="select ContactName,phone from Suppliers where ContactName=? and inDB=1";                                             
                     if(!dataIsInDB(fields.subList(2, 3),query2,"check if exist supplier").isEmpty()){                                 
                         data=new ArrayList();
                         Collections.addAll(data,productComboBox.getValue().getProductPriceID(),

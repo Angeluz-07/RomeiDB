@@ -5,6 +5,7 @@
  */
 package databaseproject;
 
+import static databaseproject.Utils.showErrorDialog;
 import static databaseproject.Utils.showInfoDialog;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Alert;
@@ -28,7 +30,7 @@ public class MySqlUtil {
     static final String PASS = "";
    
     static int userID;
-    //get register list to register table
+     //get register list to register table
    public static ArrayList<Register> getRegToReg(){
     Connection conn = null;
     PreparedStatement pstm = null;
@@ -90,6 +92,99 @@ public class MySqlUtil {
          productTemp.setProductPriceID(productPriceID);
          registerTemp.setInitialStock(initialStock);              
          registerTemp.setProduct(productTemp);         
+         registers.add(registerTemp);         
+      }      
+      
+      
+   }catch(Exception e){
+      e.printStackTrace();     
+      throw new RuntimeException(e);
+   }finally{
+      // -------------
+      // ** PARTE 3 **
+      // -------------
+      // cierro todos los recursos en orden inverso al que
+      // fueron adquiridos
+      try{
+        if( rs!=null ) rs.close();
+        if( pstm!=null ) pstm.close();     
+        if(conn!=null) conn.close();
+      }catch(Exception e){ 
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }//end finally try
+   }//end try   
+   System.out.println("Goodbye!"); 
+   return registers;
+   }
+   
+   //get registers to update
+   public static ArrayList<Register> getRegToUpdateReg(){
+    Connection conn = null;
+    PreparedStatement pstm = null;
+    ResultSet rs = null;    
+    
+    /*Variables to create the objects*/              
+    ArrayList<Register> registers=new ArrayList();    
+    Register registerTemp;
+    Product productTemp;
+    try{
+      // -------------
+      // ** PARTE 1 **
+      // -------------
+      // levanto el driver
+      Class.forName(JDBC_DRIVER);      
+      // establezco la conexion
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL,USER,PASS);     
+      
+      // -------------
+      // ** PARTE 2 **
+      // -------------
+      //defino un query      
+      /* 
+        it gives nombre, producto, stockAlInicio
+        trough a store procedure, previously created
+      */
+      String sql="select * from Registers";      
+      
+      // preparo la sentencia que voy a ejecutar
+      System.out.println("Cooking the statement...");
+      pstm = conn.prepareStatement(sql);
+      // ejecuto la sentencia y obtengo los resultados en rs      
+      rs = pstm.executeQuery();
+      
+      // itero los resultados              
+      while(rs.next()){
+        //Retrieve data row by row  
+        int registerId=rs.getInt("RegisterID");
+        int userId=rs.getInt("UserID");
+        String registerDate=rs.getString("RegisterDate");
+        int productPriceId=rs.getInt("ProductPriceID");
+        int initialStock=rs.getInt("InitialStock");
+        int finalStock=rs.getInt("FinalStock");
+        int quantitySold=rs.getInt("QuantitySold");
+        double cashSale=rs.getDouble("CashSale");
+        
+        //Create objects with data obtained
+        //initialize objects
+        registerTemp=new Register();        
+        productTemp=new Product();      
+        registerTemp.setRegisterId(registerId);
+        registerTemp.setUserId(userId);
+        registerTemp.setDate(registerDate);
+        for(Product p: MySqlUtil.getCurrentProducts()){
+            if(p.getProductPriceID()==productPriceId){
+                registerTemp.setProduct(new Product(p.getName(),p.getPrice()));              
+                break;
+            }
+        }
+        registerTemp.setProductPriceId(productPriceId);
+        registerTemp.setInitialStock(initialStock);
+        registerTemp.setFinalStock(finalStock);
+        registerTemp.setQuantitySold(quantitySold);
+        registerTemp.setCashSale(cashSale);
+                       
          registers.add(registerTemp);         
       }      
       
@@ -531,9 +626,7 @@ public class MySqlUtil {
         throw new RuntimeException(e);
       }//end finally try
    }//end try   
-   System.out.printf("Serving the statement in %s GoodBye!\n",place);        
-   return success;
+    System.out.printf("Serving the statement in %s GoodBye!\n",place);        
+    return success;
    }    
-   
 }
-

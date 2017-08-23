@@ -48,7 +48,7 @@ public class TabAddProduct extends Tab {
         this.setGraphic(stp);  
         init();
     }
-    private void init(){        
+    private void init() {        
         //GridPane with 10px padding around edge
         container = new VBox();       
         //container.setAlignment(Pos.TOP_CENTER);
@@ -91,17 +91,19 @@ public class TabAddProduct extends Tab {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 4);        
-        saveButton.setOnAction(e->{
-            
+        
+        saveButton.setOnAction(e->{            
             fields=new ArrayList();
+            
             Collections.addAll(fields,productName.getText(),
                                       price.getText(),
                                       supplierName.getText());
             
             if(!thereAreEmptyFields(fields,actiontarget)){
+                
                 String query1="call getProductWithPrice(?,?)";
-                if(dataIsInDB(fields.subList(0, 2),query1,"check if exist the product").isEmpty()){
-                    String query2="select ContactName,phone from Suppliers where ContactName=?";                                             
+                if(dataIsInDB(fields.subList(0, 2),query1,"TabAddProduct to check if exist the product").isEmpty()){
+                    String query2="select ContactName,phone from Suppliers where ContactName=? and inDB=1";                                             
                     if(!dataIsInDB(fields.subList(2, 3),query2,"check if exist supplier").isEmpty()){                                 
                         data=new ArrayList();
                         Collections.addAll(data,supplierName.getText(),
@@ -120,7 +122,7 @@ public class TabAddProduct extends Tab {
                 }else{                    
                   showErrorDialog("El producto ya existe.");
                 }
-            }                                
+            }                              
         });
                
         actiontarget = new Text();

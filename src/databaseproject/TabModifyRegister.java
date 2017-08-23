@@ -20,18 +20,18 @@ import javafx.scene.layout.*;
  *
  * @author User
  */
-public class TabRegister extends Tab {
+public class TabModifyRegister extends Tab {
     VBox container;
     static DatePicker datePicker=new DatePicker();
     static TableView<Register> registerTable;   
     static Label totalValLabel;
     Button newRegB;
-    Button saveRegB;
+    Button updateRegB;
         
     static int userID; 
     static ArrayList<Object> data;
     
-    public TabRegister(String text){
+    public TabModifyRegister(String text){
         Label l = new Label(text);
         l.setRotate(90);
         StackPane stp = new StackPane(new Group(l));
@@ -40,14 +40,14 @@ public class TabRegister extends Tab {
         init();
     }
     private void init(){        
-        registerTable=new TableView(RegisterTableUtil.getRegListToRegister()); 
+        registerTable=new TableView(RegisterTableUtil.getRegToUpdateReg()); 
         registerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         datePicker.setEditable(false);        
         datePicker.setValue(LocalDate.now());       
-        registerTable.setMinWidth(620);
+        //registerTable.setMinWidth(620);
         registerTable.setEditable(true);
         
-        registerTable.getColumns().addAll(RegisterTableUtil.getAddedOrRemovedStockColumn(),
+        registerTable.getColumns().addAll(RegisterTableUtil.getDateColumn(),
                                           RegisterTableUtil.getProductColumn(),
                                           RegisterTableUtil.getInitialStockColumn(),
                                           RegisterTableUtil.getFinalStockColumn(),
@@ -55,7 +55,7 @@ public class TabRegister extends Tab {
                                           RegisterTableUtil.getCashSaleColumn());
         
         container =new VBox();                        
-        container.getChildren().addAll(datePicker,registerTable);                
+        container.getChildren().addAll(registerTable);                
         
         HBox resultContainer=new HBox();                
         resultContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -70,32 +70,28 @@ public class TabRegister extends Tab {
         buttonsContainer.setSpacing(10);
         newRegB= new Button("Refrescar Tabla");      
         newRegB.setOnAction(e->{    
-            registerTable.setItems(RegisterTableUtil.getRegListToRegister());            
+            registerTable.setItems(RegisterTableUtil.getRegToUpdateReg());            
         });
-        saveRegB= new Button("Guardar");        
-        saveRegB.setOnAction(e->{
+        updateRegB= new Button("Actualizar");        
+        updateRegB.setOnAction(e->{
             ObservableList<Register> registers=registerTable.getItems();                                      
             Register r;
-            boolean flag=true;
-            String query="";
-            query+="insert into Registers (UserID,RegisterDate,ProductPriceID,InitialStock,FinalStock,QuantitySold,CashSale)";    
-            query+="values(?,?,?,?,?,?,?)";
+            boolean flag=true;            
             for(int i=0;i<registers.size();i++){
                 data=new ArrayList();                    
                 r=registers.get(i);
-                Collections.addAll(data,userID,
-                                        setDateFormat(datePicker.getEditor().getText()),
-                                        r.getProduct().getProductPriceID(),
-                                        r.getInitialStock(),
+                Collections.addAll(data,r.getInitialStock(),
                                         r.getFinalStock(),
                                         r.getQuantitySold(),
                                         r.getCashSale(),
+                                        r.getRegisterId(),
                                         r.getAddedOrRemovedStock());                
-                flag=MySqlUtil.queryWithData(data.subList(0, 7),query,"TabRegister to insert registers");
+                String query="call updateRegister(?,?,?,?,?)";
+                flag=MySqlUtil.queryWithData(data.subList(0, 5),query,"TabRegister to update registers");
                 if(r.getAddedOrRemovedStock()!=0){          
                     String query2="";
                     query2+="call insertAORS(?)"; 
-                    flag=MySqlUtil.queryWithData(data.subList(7, 8), query2, "TabRegister to insert AORStock");
+                    flag=MySqlUtil.queryWithData(data.subList(6, 7), query2, "TabRegister to insert AORStock");
                 }
                 if(!flag){
                   showErrorDialog("Un error ocurrio durante la transaccion");                    
@@ -106,9 +102,9 @@ public class TabRegister extends Tab {
             else    showErrorDialog("Un error ocurrio durante la transaccion");                    
         });
         
-        buttonsContainer.getChildren().addAll(newRegB,saveRegB);
+        buttonsContainer.getChildren().addAll(newRegB,updateRegB);
         
-        container.getChildren().addAll(resultContainer,buttonsContainer);        
+        container.getChildren().addAll(buttonsContainer);        
         this.setContent(container);
     }
 

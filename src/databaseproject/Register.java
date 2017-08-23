@@ -12,6 +12,9 @@ package databaseproject;
 public class Register {
     /* i set the date as a string to put that value in db*/
     String date;
+    int registerId;
+    int userId;
+    int productPriceId;
     int addedOrRemovedStock;
     Product product;
     int initialStock;
@@ -117,6 +120,32 @@ public class Register {
     public void computeCashSales(){
         setCashSale(quantitySold*product.getPrice());
     }
+
+    public int getRegisterId() {
+        return registerId;
+    }
+
+    public void setRegisterId(int registerId) {
+        this.registerId = registerId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getProductPriceId() {
+        return productPriceId;
+    }
+
+    public void setProductPriceId(int productPriceId) {
+        this.productPriceId = productPriceId;
+    }
+    
+    
     
     @Override
     public String toString() {

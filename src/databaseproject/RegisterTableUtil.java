@@ -34,8 +34,8 @@ public class RegisterTableUtil {
         ObservableList<Register> registers=FXCollections.observableArrayList();                
         /* Load an array of Registers from db.
            Exist one by each product in the db.
-           and it's about the day before of the day 
-           presented in app.
+           and it's about the day of the last register
+           presented in app and a new product
            WARNING
         */           
         registers.addAll(MySqlUtil.getRegToReg());              
@@ -50,6 +50,14 @@ public class RegisterTableUtil {
         //now i create the register in format to show on report       
              
         
+        return registers;
+    }
+    public static ObservableList<Register> getRegToUpdateReg() {       
+        ObservableList<Register> registers=FXCollections.observableArrayList();        
+        
+        //all the registers object that could be created over one Product       
+        //now i create the register in format to show on report       
+        registers.addAll(MySqlUtil.getRegToUpdateReg());        
         return registers;
     }
     

@@ -45,7 +45,8 @@ public class TabReport extends Tab {
         init();
     }
     private void init(){
-        reportTable=new TableView(RegisterTableUtil.getRegListToRegister());
+        reportTable=new TableView(RegisterTableUtil.getRegListToRegister());     
+        reportTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //datePicker.setValue(LocalDate.now());
         //datePicker.setEditable(false);
         container =new VBox(); 

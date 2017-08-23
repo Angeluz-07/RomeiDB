@@ -94,7 +94,7 @@ public class TabAddSupplier extends Tab {
                     String query2="";
                     query2+="insert into Suppliers(ContactName,Phone)";
                     query2+="values(?,?) ";
-                    if(MySqlUtil.queryWithData(data,query2,"TabAddSupplier")){
+                    if(MySqlUtil.queryWithData(data,query2,"TabAddSupplier to insert to supplier")){
                         showInfoDialog("La operacion se realizo con exito!");      
                     }else{
                         showErrorDialog("Un error ocurrio durante la transaccion.");
