@@ -8,23 +8,25 @@ package databaseproject;
 import static databaseproject.TabRegister.registerTable;
 import static databaseproject.Utils.setDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 
 public class TabReport extends Tab {
     VBox container;      
     static TableView<Register> reportTable;    
+    static Text title= new Text("Proceda a hacer el registro");    
+    
     //generate report Button
     Button genReportB;
        
-    HBox saleRateContainer;
-    Label saleRateTag;
-    Label saleRateLabel;
+ 
     
     HBox productContainer;
     Label productTag;
@@ -51,19 +53,17 @@ public class TabReport extends Tab {
         //datePicker.setEditable(false);
         container =new VBox(); 
         
+         HBox hbTitle=new HBox();
+        hbTitle.getChildren().add(title);
+        hbTitle.setAlignment(Pos.CENTER);
+        container.getChildren().add(hbTitle);
+        
         reportTable.setMinWidth(620);        
         reportTable.getColumns().addAll(RegisterTableUtil.getDateColumn(),
                                         RegisterTableUtil.getQuantitySoldColumn(),
                                         RegisterTableUtil.getCashSaleColumn());
         
-                             
-        saleRateContainer=new HBox();        
-        saleRateTag=new Label("Tasa de venta : ");
-        saleRateLabel=new Label("   ");
-        saleRateContainer.getChildren().addAll(saleRateTag,saleRateLabel);
-        saleRateContainer.setAlignment(Pos.CENTER);
-        
-        
+                                     
         productContainer=new HBox();
         productTag=new Label("Producto : ");
         productComboBox=new ComboBox();
@@ -86,7 +86,7 @@ public class TabReport extends Tab {
         dateContainer.getChildren().addAll(dateTag,dateIni,dashTag,dateFin);
         dateContainer.setAlignment(Pos.CENTER);
         
-        container.getChildren().addAll(reportTable,saleRateContainer,productContainer,dateContainer);                
+        container.getChildren().addAll(reportTable,productContainer,dateContainer);                
                 
         HBox buttonsContainer=new HBox(); 
         buttonsContainer.setAlignment(Pos.CENTER);
@@ -98,13 +98,17 @@ public class TabReport extends Tab {
             String dateIniFormatted=setDateFormat(dateIni.getEditor().getText());            
             String dateFinFormatted=setDateFormat(dateFin.getEditor().getText());           
             
-            ObservableList<Register> registers=FXCollections.observableArrayList();        
+            ObservableList<Register> registersToTable=FXCollections.observableArrayList();        
             Product p= productComboBox.getValue();
-            registers.addAll(MySqlUtil.getRegToReport(dateIniFormatted,
-                                                      dateFinFormatted,
-                                                      p));            
-            reportTable.setItems(registers);
-            if(!registers.isEmpty()) reportTable.refresh();
+            
+            ArrayList<Register> registersFromDB=MySqlUtil.getRegToReport(dateIniFormatted,
+                                                                         dateFinFormatted,
+                                                                         p);
+            if(!registersFromDB.isEmpty()){
+                registersToTable.addAll(registersFromDB);            
+                reportTable.setItems(registersToTable);
+                reportTable.refresh();
+            }
         });
                       
         buttonsContainer.getChildren().addAll(genReportB);

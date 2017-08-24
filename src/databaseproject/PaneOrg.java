@@ -61,9 +61,8 @@ public class PaneOrg {
         TabModifyProduct tabModifyProduct=new TabModifyProduct("Modificar producto");
         TabModifySupplier tabModifySupplier=new TabModifySupplier("Modificar proveedor");
         TabModifyUser tabModifyUser=new TabModifyUser("Modificar Usuario");
-        TabModifyRegister tabModifyRegister=new TabModifyRegister("Modificar Registro");                            
-        tabPane.getTabs().addAll(tabRegister,
-                                 tabModifyRegister,
+        TabModifyRegister tabModifyRegister=new TabModifyRegister("Modificar Registro");
+                tabPane.getTabs().addAll(tabRegister,
                                  tabReport,
                                  tabAddNewProduct, 
                                  tabModifyProduct,

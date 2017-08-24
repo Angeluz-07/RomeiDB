@@ -15,6 +15,7 @@ import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -22,6 +23,7 @@ import javafx.scene.layout.*;
  */
 public class TabRegister extends Tab {
     VBox container;
+    static Text title= new Text("Proceda a hacer el registro");    
     static DatePicker datePicker=new DatePicker();
     static TableView<Register> registerTable;   
     static Label totalValLabel;
@@ -55,7 +57,16 @@ public class TabRegister extends Tab {
                                           RegisterTableUtil.getCashSaleColumn());
         
         container =new VBox();                        
+        
+        HBox hbTitle=new HBox();
+        hbTitle.getChildren().add(title);
+        hbTitle.setAlignment(Pos.CENTER);
+        container.getChildren().add(hbTitle);
+        
         container.getChildren().addAll(datePicker,registerTable);                
+        
+       
+        
         
         HBox resultContainer=new HBox();                
         resultContainer.setAlignment(Pos.CENTER_RIGHT);

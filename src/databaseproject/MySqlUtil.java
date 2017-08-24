@@ -261,11 +261,7 @@ public class MySqlUtil {
         registers.add(registerTemp);         
       }      
     if(registers.isEmpty()){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("");
-        alert.setHeaderText(null);
-        alert.setContentText("No hay info acerca del producto");      
-        alert.showAndWait();      
+        showInfoDialog("No existe esa informacion acerca del producto");
         return registers;
     }
       
