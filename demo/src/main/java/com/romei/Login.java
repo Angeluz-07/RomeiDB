@@ -80,7 +80,7 @@ public class Login {
                     TabRegister.userID=(Integer)dataIsInDB(fields,query,"").get(0);
                     PaneOrg a=new PaneOrg();
                     RomeiDB.sceneApp=new Scene(a.getRoot(),820,600);
-                    //RomeiDB.sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());               
+                    RomeiDB.sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());               
                     RomeiDB.window.setScene(RomeiDB.sceneApp);                
                 }else{
                     showErrorDialog("No existe el usuario.");
