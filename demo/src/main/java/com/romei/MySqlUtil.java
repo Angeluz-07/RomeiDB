@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databaseproject;
+package com.romei;
 
-import static databaseproject.Utils.showErrorDialog;
-import static databaseproject.Utils.showInfoDialog;
+import static com.romei.Utils.showErrorDialog;
+import static com.romei.Utils.showInfoDialog;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,15 +23,16 @@ import javafx.scene.control.Alert.AlertType;
  *
  * @author User
  */
+
 public class MySqlUtil {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
     static final String DB_URL = "jdbc:mysql://localhost/romeidb";   
     static final String USER = "root";
-    static final String PASS = "";
+    static final String PASS = "root_password";
    
     static int userID;
-     //get register list to register table
-   public static ArrayList<Register> getRegToReg(){
+    //get register list to register table
+    public static ArrayList<Register> getRegToReg(){
     Connection conn = null;
     PreparedStatement pstm = null;
     ResultSet rs = null;    
@@ -527,18 +528,22 @@ public class MySqlUtil {
       // establezco la conexion
       System.out.printf("Connecting to database in %s...\n",place);
       conn = DriverManager.getConnection(DB_URL,USER,PASS);     
-      
+      System.out.println(conn.getClientInfo());
+      System.out.println(conn.isValid(5));
+      System.out.println(conn.getCatalog());
+      System.out.println(conn.getSchema());
       // -------------
       // ** PARTE 2 **
       // -------------
       //defino un query          
       String sql=query;           
+      System.out.println(sql);
       // preparo la sentencia que voy a ejecutar
       System.out.printf("Cooking the statement in %s...\n",place);
       pstm = conn.prepareStatement(sql);
       
       for(int i=1;i<=fields.size();i++){
-          //System.out.println(i+" "+fields.get(i-1));
+          System.out.println(i+" "+fields.get(i-1));
           pstm.setObject(i,fields.get(i-1));       
       }           
       // ejecuto la sentencia y obtengo los resultados en rs      

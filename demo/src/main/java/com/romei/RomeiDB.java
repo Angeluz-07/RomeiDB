@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databaseproject;
+package com.romei;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -23,32 +23,12 @@ public class RomeiDB extends Application {
     @Override
     public void start(Stage primaryStage) {       
         window=primaryStage;                               
-        window.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
+        //window.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
         //PaneOrg app=new PaneOrg(); 
         Login login=new Login();
-        sceneLogIn = new Scene(login.getLoginPane(), 820, 600);                      
-        //sceneApp=new Scene(app.getRoot(),700,600);
-        // I set this handler here, because from here
-        
-        /*Login.loginButton.setOnAction(e->{            
-            boolean userIsValid=true;
-            //boolean userIsValid=Login.validateLogin(Login.nameInput.getText(),Login.passInput.getText());
-            if(userIsValid){                              
-                PaneOrg a=new PaneOrg();
-                sceneApp=new Scene(a.getRoot(),700,600);
-                window.setScene(sceneApp);                
-            }
-        }); */
-        /*
-        PaneOrg.tabLogOut.setOnSelectionChanged(e->{
-            Login log=new Login();
-            sceneLogIn = new Scene(log.getLoginPane(), 700, 600);
-            window.setScene(sceneLogIn);
-            //sceneApp=null;
-            //PaneOrg.tabPane.getSelectionModel().select(0);
-        });*/
-        
-        sceneLogIn.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());       
+        sceneLogIn = new Scene(login.getLoginPane(), 1000, 800);                      
+     
+        sceneLogIn.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());       
         //sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());                   
         window.setTitle("Comercial Romei - DB Management");
         window.setScene(sceneLogIn);

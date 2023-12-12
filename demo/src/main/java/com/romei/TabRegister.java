@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databaseproject;
-import static databaseproject.Utils.setDateFormat;
-import static databaseproject.Utils.showErrorDialog;
-import static databaseproject.Utils.showInfoDialog;
+package com.romei;
+import static com.romei.Utils.setDateFormat;
+import static com.romei.Utils.showErrorDialog;
+import static com.romei.Utils.showInfoDialog;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;

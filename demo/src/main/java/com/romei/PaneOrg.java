@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databaseproject;
+package com.romei;
 
-import static databaseproject.RomeiDB.window;
+import static com.romei.RomeiDB.window;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -88,7 +88,7 @@ public class PaneOrg {
         tabLogOut.setOnSelectionChanged(e->{
             Login log=new Login();
             RomeiDB.sceneLogIn = new Scene(log.getLoginPane(), 820, 600);
-            RomeiDB.sceneLogIn.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());                               
+            //RomeiDB.sceneLogIn.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());                               
             window.setScene(RomeiDB.sceneLogIn);
         });
                 

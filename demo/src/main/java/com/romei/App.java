@@ -9,18 +9,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 
-// 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-//
-
 /**
  * JavaFX App
  */
@@ -30,20 +18,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // scene = new Scene(loadFXML("primary"), 640, 480);
-        // stage.setScene(scene);
-
-        window=primaryStage;                               
-        window.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
-
-        Login login=new Login();
-        sceneLogIn = new Scene(login.getLoginPane(), 820, 600);
-        
-        sceneLogIn.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());       
-        //sceneApp.getStylesheets().add(getClass().getResource("Style.css").toExternalFo‌​rm());                   
-        window.setTitle("Comercial Romei - DB Management");
-        window.setScene(sceneLogIn);
-        window.show();
+        scene = new Scene(loadFXML("primary"), 640, 480);
+        stage.setScene(scene);
         stage.show();
     }
 

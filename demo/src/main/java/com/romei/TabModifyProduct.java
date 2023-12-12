@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databaseproject;
+package com.romei;
 
-import static databaseproject.TabRegister.registerTable;
-import static databaseproject.Utils.showErrorDialog;
-import static databaseproject.Utils.showInfoDialog;
-import static databaseproject.Utils.thereAreEmptyFields;
+import static com.romei.TabRegister.registerTable;
+import static com.romei.Utils.showErrorDialog;
+import static com.romei.Utils.showInfoDialog;
+import static com.romei.Utils.thereAreEmptyFields;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import static databaseproject.MySqlUtil.dataIsInDB;
+import static com.romei.MySqlUtil.dataIsInDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
