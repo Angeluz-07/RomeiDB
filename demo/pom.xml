@@ -47,7 +47,7 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.romei.RomeiDB</mainClass>
+                            <mainClass>com.romei.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>

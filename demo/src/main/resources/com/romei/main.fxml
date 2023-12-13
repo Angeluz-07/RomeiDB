@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<BorderPane fx:id="parent" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="com.romei.MainController" >
+   <left>
+      <VBox>
+      <Button fx:id="registersView" text="Registros" onAction="#loadRegistersView"/>
+      <Button fx:id="reportsView" text="Reportes" onAction="#loadReportsView"/>
+      <Button fx:id="addProductsView" text="Agregar Productos" onAction="#loadAddProductsView"/>
+      <Button fx:id="updProductsView" text="Editar Productos" onAction="#loadUpdProductsView"/>
+      <Button fx:id="addUsersView" text="Agregar Usuarios" onAction="#loadAddUsersView"/>
+      <Button fx:id="updUsersView" text="Editar Usuarios" onAction="#loadUpdUsersView"/>
+      <Button fx:id="addSuppliersView" text="Agregar Usuarios" onAction="#loadAddSuppliersView"/>
+      <Button fx:id="updSuppliersView" text="Editar Usuarios" onAction="#loadUpdSuppliersView"/>
+      <Button fx:id="logout" text="Cerrar sesión" onAction="#runLogout"/>
+      <Button fx:id="exit" text="Exit" onAction="#runExit"/>
+      </VBox>
+   </left>
+   <center>
+      <StackPane>
+         <Text text="hello, default value"/>
+      </StackPane>
+   </center>
+</BorderPane>

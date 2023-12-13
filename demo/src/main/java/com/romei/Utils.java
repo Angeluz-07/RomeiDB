@@ -45,7 +45,7 @@ public class Utils {
     
     public static void showErrorDialog(String msg){
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initOwner(RomeiDB.window);        
+        alert.initOwner(App.window);        
         //s.getIcons().add(new Image("images/logo_full3.png"));
         //s.getIcons().add(new Image("databasproject/icon.png"));        
         alert.setTitle("");
@@ -56,7 +56,7 @@ public class Utils {
     
     public static void showInfoDialog(String msg){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.initOwner(RomeiDB.window);
+        alert.initOwner(App.window);
         //alert.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
         //alert.initOwner(alert.getDialogPane().getScene().getWindow());
         //Stage s= (Stage) alert.getDialogPane().getScene().getWindow();

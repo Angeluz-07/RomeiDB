@@ -169,7 +169,7 @@ public class RegisterTableUtil {
         ObservableList<Register> registers=updateCell.getTableView().getItems();        
         System.out.println(sumCashSales(registers));                        
        
-        TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
+        //TabRegister.totalValLabel.setText(String.valueOf(sumCashSales(registers)));                        
         
         updateCell.getTableView().refresh();
         System.out.println(r.toString());        
