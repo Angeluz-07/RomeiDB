@@ -47,11 +47,11 @@ public class LoginController {
             warnBadInputs.setText("El usuario o la clave son incorrectas");
         }else {
             System.out.println(dataInDB.toString());
-            TabRegister.userID=(Integer)dataInDB.get(0);
-            PaneOrg a=new PaneOrg();
-            Scene temp =new Scene(a.getRoot(),820,600);
-            temp.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
-            App.window.setScene(temp);
+            //TabRegister.userID=(Integer)dataInDB.get(0);
+            //PaneOrg a=new PaneOrg();
+            //Scene temp =new Scene(a.getRoot(),820,600);
+            //temp.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+            //App.window.setScene(temp);
         }
     }    
 }
