@@ -526,36 +526,40 @@ public class MainController {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 6);
+
+        UserService userService = new UserService();
         saveButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, firstName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    firstName.getText(),
                     lastName.getText(),
                     userName.getText(),
                     passInput.getText(),
                     confirmPassInput.getText());
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                if (bothFieldsEqual(passInput.getText(), confirmPassInput.getText(), actiontarget)) {
-                    String query1 = "select FirstName,LastName,UserName from users where FirstName=? and LastName=? and UserName=? and inDB=1";
-                    if (dataIsInDB(fields.subList(0, 3), query1, "TabAddUsser.java to check if already exist user")
-                            .isEmpty()) {
-                        data = new ArrayList();
-                        Collections.addAll(data, firstName.getText(),
-                                lastName.getText(),
-                                userName.getText(),
-                                passInput.getText());
-                        String query2 = "";
-                        query2 += "insert into Users (FirstName,LastName,UserName,Password)";
-                        query2 += "values(?,?,?,?) ";
-                        if (MySqlUtil.queryWithData(data, query2, "TabAddUser to insert user")) {
-                            showInfoDialog("La operacion se realizo con exito!");
-                        } else {
-                            showErrorDialog("Un error ocurrio durante la transaccion");
-                        }
-                    } else {
-                        showErrorDialog("El usuario ya esta registrado");
-                    }
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+            Boolean bothFieldsEqual = passInput.getText().equals(confirmPassInput.getText());
+            if (!bothFieldsEqual) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Las contraseñas no coinciden");
+                return;
+            }
+            Boolean userExists = userService.userExists(firstName.getText(), lastName.getText(), userName.getText());
+            if (userExists) {
+                showErrorDialog("El usuario ya esta registrado");
+            }
+
+            Boolean addedSuccessfully = userService.addUser(firstName.getText(), lastName.getText(), userName.getText(),
+                    passInput.getText());
+            if (addedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion");
+            }
+
         });
 
         actiontarget = new Text();
