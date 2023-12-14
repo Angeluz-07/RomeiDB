@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 public class MysqlRepository implements IDBRepository {
 
@@ -143,5 +146,98 @@ public class MysqlRepository implements IDBRepository {
     } // end try
     System.out.printf("Serving the statement in %s GoodBye!\n", place);
     return success;
+  }
+
+  public List<Map<String, Object>> getItemsWithQuery(String query, List<String> properties) {
+    Connection conn = null;
+    PreparedStatement pstm = null;
+    ResultSet rs = null;
+
+    List<Map<String, Object>> result = new ArrayList<>();
+    /* Variables to create the objects */
+    ArrayList<Product> products = new ArrayList();
+    Product productTemp;
+    Supplier supplierTemp;
+    try {
+      // -------------
+      // ** PARTE 1 **
+      // -------------
+      // levanto el driver
+      Class.forName(JDBC_DRIVER);
+      // establezco la conexion
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+      // -------------
+      // ** PARTE 2 **
+      // -------------
+      // defino un query
+      /*
+       * it gives nombre, producto, stockAlInicio
+       * trough a store procedure, previously created
+       */
+      // String sql = "call getCurrentProducts()";
+      String sql = query;
+
+      // preparo la sentencia que voy a ejecutar
+      System.out.println("Cooking the statement...");
+      pstm = conn.prepareStatement(sql);
+
+      // ejecuto la sentencia y obtengo los resultados en rs
+      rs = pstm.executeQuery();
+      // itero los resultados
+      Map<String, Object> tempMap;
+      while (rs.next()) {
+        tempMap = new HashMap<>();
+        for (String p : properties) {
+          Object obj = rs.getObject(p);
+          tempMap.put(p, obj);
+        }
+        result.add(tempMap);
+
+        // for p in pr
+        // properties.forEach(null);
+        // IntStream.range(0,properties.size()).forEach(i -> g);
+        // // Retrieve data row by row
+        // int productID = rs.getInt("ProductId");
+        // String productName = rs.getString("ProductName");
+        // int productPriceID = rs.getInt("ProductPriceId");
+        // double price = rs.getDouble("Price");
+        // int supplierID = rs.getInt("SupplierID");
+        // String contactName = rs.getString("ContactName");
+
+        // // Create objects with data obtained
+        // supplierTemp = new Supplier(supplierID, contactName);
+        // productTemp = new Product(productName, price, productPriceID, productID,
+        // supplierTemp);
+
+        // products.add(productTemp);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    } finally {
+      // -------------
+      // ** PARTE 3 **
+      // -------------
+      // cierro todos los recursos en
+      // orden inverso al que
+      // fueron adquiridos
+      try {
+        if (rs != null)
+          rs.close();
+        if (pstm != null)
+          pstm.close();
+        if (conn != null)
+          conn.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      } // end finally try
+    } // end try
+    // System.out.println("Goodbye!");
+    return result;
+    // return products;
   }
 }

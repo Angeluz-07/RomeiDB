@@ -21,6 +21,7 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.Style;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -336,20 +337,17 @@ public class MainController {
         ComboBox<Product> productComboBox = new ComboBox();
         productComboBox.setPromptText("Elija un producto");
         // the next line should be replaced with a db access
-        productComboBox.getItems().addAll(MySqlUtil.getCurrentProducts());
-        productComboBox.setOnShowing(e -> {
-            ObservableList<Product> productsToComboBox = FXCollections.observableArrayList();
-            products = MySqlUtil.getCurrentProducts();
-            productsToComboBox.setAll(products);
-            productComboBox.setItems(productsToComboBox);
-        });
 
-        productComboBox.setOnHidden(e -> {
-            Product chosenProduct = (Product) productComboBox.getValue();
-            productName.setText(chosenProduct.getName());
-            price.setText(Double.toString(chosenProduct.getPrice()));
-            supplierName.setText(chosenProduct.getSupplier().getContactName());
-        });
+        ProductService productService = new ProductService();
+        productComboBox.getItems().addAll(productService.getProducts());
+        // productComboBox.setOnShowing(e -> {
+        // ObservableList<Product> productsToComboBox =
+        // FXCollections.observableArrayList();
+        // List<Product> products = productService.getProducts();
+        // productsToComboBox.setAll(products);
+        // productComboBox.setItems(productsToComboBox);
+        // });
+
         GridPane.setConstraints(productComboBox, 3, 1);
 
         // productName Label - constrains use (child, column, row)
@@ -373,6 +371,14 @@ public class MainController {
         TextField supplierName = new TextField();
         GridPane.setConstraints(supplierName, 1, 3);
 
+        
+        productComboBox.setOnHidden(e -> {
+            Product chosenProduct = (Product) productComboBox.getValue();
+            productName.setText(chosenProduct.getName());
+            price.setText(Double.toString(chosenProduct.getPrice()));
+            supplierName.setText(chosenProduct.getSupplier().getContactName());
+        });
+    
         Button deleteButton = new Button("Borrar");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
