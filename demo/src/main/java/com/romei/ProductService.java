@@ -25,14 +25,6 @@ public class ProductService {
 
     }
 
-    public boolean suppliertExists(String supplierName) {
-        String query2 = "select ContactName,phone from Suppliers where ContactName=? and inDB=1";
-        List<Object> fields = new ArrayList();
-        Collections.addAll(fields, supplierName);
-        return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
-
-    }
-
     public boolean addProduct(String supplierName, String productName, String price) {
         String query3 = "call insertProduct(?,?,?)";// todo:fix
         List<Object> data = new ArrayList();

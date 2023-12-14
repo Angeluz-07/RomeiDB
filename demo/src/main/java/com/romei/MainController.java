@@ -275,7 +275,7 @@ public class MainController {
         GridPane.setConstraints(hbBtn, 1, 4);
 
         ProductService productService = new ProductService();
-
+        SupplierService supplierService = new SupplierService();
         saveButton.setOnAction(e -> {
             List<Object> inputs = Arrays.asList(
                     productName.getText(),
@@ -288,7 +288,7 @@ public class MainController {
                 return;
             }
 
-            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            Boolean supplierExists = supplierService.suppliertExists(supplierName.getText());
             if (!supplierExists) {
                 showErrorDialog("El Proveedor no esta registrado");
                 return;
@@ -383,6 +383,7 @@ public class MainController {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(deleteButton);
 
+        SupplierService supplierService = new SupplierService();
         deleteButton.setOnAction(e -> {
             List<Object> inputs = Arrays.asList(
                     productName.getText(),
@@ -396,7 +397,7 @@ public class MainController {
             }
 
             // todo: this check could removed
-            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            Boolean supplierExists = supplierService.suppliertExists(supplierName.getText());
             if (!supplierExists) {
                 showErrorDialog("El Proveedor no esta registrado");
                 return;
@@ -440,7 +441,7 @@ public class MainController {
                 return;
             }
 
-            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            Boolean supplierExists = supplierService.suppliertExists(supplierName.getText());
             if (!supplierExists) {
                 showErrorDialog("El Proveedor no esta registrado");
                 return;
@@ -719,7 +720,7 @@ public class MainController {
                 return;
             }
 
-            Boolean updatedSuccessfully = userService.updateUser( firstName.getText(),
+            Boolean updatedSuccessfully = userService.updateUser(firstName.getText(),
                     lastName.getText(),
                     userName.getText(),
                     passInput.getText(),
@@ -783,29 +784,31 @@ public class MainController {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 3);
+        SupplierService supplierService = new SupplierService();
         saveButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, contactName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    contactName.getText(),
                     phone.getText());
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                String query1 = "select ContactName,phone from Suppliers where ContactName=? and inDB=1";
-                if (dataIsInDB(fields.subList(0, 1), query1, "TabAddSupplier.java").isEmpty()) {
-                    data = new ArrayList();
-                    Collections.addAll(data, contactName.getText(),
-                            phone.getText());
-
-                    String query2 = "";
-                    query2 += "insert into Suppliers(ContactName,Phone)";
-                    query2 += "values(?,?) ";
-                    if (MySqlUtil.queryWithData(data, query2, "TabAddSupplier to insert to supplier")) {
-                        showInfoDialog("La operacion se realizo con exito!");
-                    } else {
-                        showErrorDialog("Un error ocurrio durante la transaccion.");
-                    }
-                } else {
-                    showErrorDialog("El Proveedor ya esta registrado");
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+
+            Boolean supplierExists = supplierService.suppliertExists(contactName.getText());
+            if (supplierExists) {
+                showErrorDialog("El Proveedor ya esta registrado");
+                return;
+            }
+            Boolean addedSuccessfully = supplierService.addSupplier(contactName.getText(),
+                    phone.getText());
+            if (addedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion.");
+            }
+
         });
 
         actiontarget = new Text();
