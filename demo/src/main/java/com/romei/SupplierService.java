@@ -1,9 +1,5 @@
 package com.romei;
 
-import static com.romei.MySqlUtil.dataIsInDB;
-
-import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
