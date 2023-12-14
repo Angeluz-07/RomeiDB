@@ -34,48 +34,47 @@ public class UserService {
         return this.repository.queryWithData(fields, query2,  "TabAddUser to insert user");
     }
 
-    // public boolean removeProduct(Integer productPriceId, Integer productId) {
-    //     // logical deletion
-    //     String query3 = "call setStateProduct(0,?,?)";// todo: fix
-    //     List<Object> data = new ArrayList();
-    //     Collections.addAll(data, productPriceId, productId);
-    //     return this.repository.queryWithData(data, query3, "TabAddProduct to delete");
-    // }
+    public boolean removeUser(Integer userId) {
+        // logical deletion
+        String query3 = "call setStateUser(0,?)";//todo: fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, userId);
+        return this.repository.queryWithData(data, query3, "TabAddUser to delete");
+    }
 
-    // public boolean updateProduct(String supplierName, String productName, Double price, Integer productId,
-    //         Integer productPriceId) {
-    //     String query3 = "call updateProduct(?,?,?,?,?)";// todo:fix
-    //     List<Object> data = new ArrayList();
-    //     Collections.addAll(data, supplierName, productName, price, productId, productPriceId);
-    //     return this.repository.queryWithData(data, query3, "TabAddProduct to update");
-    // }
+    public boolean updateUser(String firstName, String lastName, String userName, String passInput,
+            Integer userId) {
+        String query3 = "call updateUser(?,?,?,?,?) ";//todo: fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, firstName, lastName, userName, passInput,userId);
+        return this.repository.queryWithData(data, query3, "TabAdduser to update");
+    }
 
-    // public List<Product> getProducts() {
-    //     String query = "call getCurrentProducts()";
-    //     List<String> properties = Arrays.asList(
-    //             "ProductId",
-    //             "ProductName",
-    //             "ProductPriceId",
-    //             "Price",
-    //             "SupplierID",
-    //             "ContactName");
-    //     List<Map<String, Object>> items = this.repository.getItemsWithQuery(query, properties);
-    //     List<Product> result = new ArrayList<>();
-    //     for (Map<String, Object> m : items) {
-    //         int productID = (int) m.get("ProductId");
-    //         String productName = (String) m.get("ProductName");
-    //         int productPriceID = (int) m.get("ProductPriceId");
-    //         BigDecimal priceBD = (BigDecimal) m.get("Price");
-    //         double price = priceBD.doubleValue();
-    //         int supplierID = (int) m.get("SupplierID");
-    //         String contactName = (String) m.get("ContactName");
+    public List<User> getUsers() {
+        String sql = "select ";
+        sql += " UserID,FirstName,LastName,UserName,Password  ";
+        sql += " from Users ";
+        sql += " where inDB=1";
 
-    //         // Create objects with data obtained
-    //         Supplier supplierTemp = new Supplier(supplierID, contactName);
-    //         Product p = new Product(productName, price, productPriceID, productID, supplierTemp);
-    //         result.add(p);
-    //     }
-    //     return result;
+        List<String> properties = Arrays.asList(
+                "UserID",
+                "FirstName",
+                "LastName",
+                "UserName",
+                "Password");
+        List<Map<String, Object>> items = this.repository.getItemsWithQuery(sql, properties);
+        List<User> result = new ArrayList<>();
+        for (Map<String, Object> m : items) {
+            int userID = (int) m.get("UserID");
+            String firstName = (String) m.get("FirstName");
+            String lastName = (String) m.get("LastName");
+            String userName = (String) m.get("UserName");
+            String pass = (String) m.get("Password");
 
-    // }
+            User u = new User(firstName, lastName, userName, pass);
+            result.add(u);
+        }
+        return result;
+
+    }
 }

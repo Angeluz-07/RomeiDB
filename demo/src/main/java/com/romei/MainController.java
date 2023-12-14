@@ -21,14 +21,22 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.css.Style;
-import javafx.geometry.*;
-import javafx.scene.Group;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.fxml.FXML;
 
 /**
  *
@@ -550,14 +558,17 @@ public class MainController {
             Boolean userExists = userService.userExists(firstName.getText(), lastName.getText(), userName.getText());
             if (userExists) {
                 showErrorDialog("El usuario ya esta registrado");
+                return;
             }
 
             Boolean addedSuccessfully = userService.addUser(firstName.getText(), lastName.getText(), userName.getText(),
                     passInput.getText());
             if (addedSuccessfully) {
                 showInfoDialog("La operacion se realizo con exito!");
+                return;
             } else {
                 showErrorDialog("Un error ocurrio durante la transaccion");
+                return;
             }
 
         });
@@ -594,14 +605,9 @@ public class MainController {
 
         ComboBox<User> userComboBox = new ComboBox();
         userComboBox.setPromptText("Elija un usuario");
-        // the next line should be replaced with a db access
 
-        userComboBox.setOnShowing(e -> {
-            ObservableList<User> usersToComboBox = FXCollections.observableArrayList();
-            users = MySqlUtil.getCurrentUsers();
-            usersToComboBox.setAll(users);
-            userComboBox.setItems(usersToComboBox);
-        });
+        UserService userService = new UserService();
+        userComboBox.getItems().addAll(userService.getUsers());
 
         userComboBox.setOnHidden(e -> {
             User chosenUser = userComboBox.getValue();
@@ -654,69 +660,76 @@ public class MainController {
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(deleteButton);
+
         deleteButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, userComboBox.getValue().getUserID(),
+            List<Object> inputs = Arrays.asList(
                     firstName.getText(),
                     lastName.getText(),
                     userName.getText(),
                     passInput.getText(),
                     confirmPassInput.getText());
-            if (!thereAreEmptyFields(fields.subList(1, 6), actiontarget)) {
-                if (bothFieldsEqual(passInput.getText(), confirmPassInput.getText(), actiontarget)) {
-                    String query1 = " call getUserInfo(?,?,?,?,?)";
-                    if (!dataIsInDB(fields.subList(0, 5), query1, "TabAddUsser.java to check if already exist user")
-                            .isEmpty()) {
-                        data = new ArrayList();
-                        Collections.addAll(data, userComboBox.getValue().getUserID());
-                        String query2 = "";
-                        query2 += "call setStateUser(0,?)";
-                        if (MySqlUtil.queryWithData(data, query2, "TabAddUser to delete user")) {
-                            showInfoDialog("La operacion se realizo con exito!");
-                        } else {
-                            showErrorDialog("Un error ocurrio durante la transaccion");
-                        }
-                    } else {
-                        showErrorDialog("El usuario no existe");
-                    }
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+            Boolean userExists = userService.userExists(firstName.getText(), lastName.getText(), userName.getText());
+            if (!userExists) {
+                showErrorDialog("El usuario no existe");
+                return;
+            }
+
+            Boolean removedSuccesfully = userService.removeUser(userComboBox.getValue().getUserID());
+            if (removedSuccesfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion");
+            }
+
         });
         // save
         Button saveButton = new Button("Guardar");
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 6);
         saveButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, userComboBox.getValue().getUserID(),
+            List<Object> inputs = Arrays.asList(
                     firstName.getText(),
                     lastName.getText(),
                     userName.getText(),
                     passInput.getText(),
                     confirmPassInput.getText());
-            if (!thereAreEmptyFields(fields.subList(1, 6), actiontarget)) {
-                if (bothFieldsEqual(passInput.getText(), confirmPassInput.getText(), actiontarget)) {
-                    String query1 = "call getUserInfo(?,?,?,?,?)";
-                    if (dataIsInDB(fields.subList(0, 5), query1, "TabAddUsser.java to check if already exist user")
-                            .isEmpty()) {
-                        data = new ArrayList();
-                        Collections.addAll(data, firstName.getText(),
-                                lastName.getText(),
-                                userName.getText(),
-                                passInput.getText(),
-                                userComboBox.getValue().getUserID());
-                        String query2 = "";
-                        query2 += "call updateUser(?,?,?,?,?) ";
-                        if (MySqlUtil.queryWithData(data, query2, "TabAddUser to update user")) {
-                            showInfoDialog("La operacion se realizo con exito!");
-                        } else {
-                            showErrorDialog("Un error ocurrio durante la transaccion");
-                        }
-                    } else {
-                        showErrorDialog("El usuario ya esta registrado");
-                    }
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+
+            Boolean bothFieldsEqual = passInput.getText().equals(confirmPassInput.getText());
+            if (!bothFieldsEqual) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Las contraseñas no coinciden");
+                return;
+            }
+
+            Boolean userExists = userService.userExists(firstName.getText(), lastName.getText(), userName.getText());
+            if (userExists) {
+                showErrorDialog("El usuario ya existe");
+                return;
+            }
+
+            Boolean updatedSuccessfully = userService.updateUser( firstName.getText(),
+                    lastName.getText(),
+                    userName.getText(),
+                    passInput.getText(),
+                    userComboBox.getValue().getUserID());
+            if (updatedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion");
+            }
+
         });
 
         actiontarget = new Text();
