@@ -176,7 +176,6 @@ public class MysqlRepository implements IDBRepository {
        * it gives nombre, producto, stockAlInicio
        * trough a store procedure, previously created
        */
-      // String sql = "call getCurrentProducts()";
       String sql = query;
 
       // preparo la sentencia que voy a ejecutar

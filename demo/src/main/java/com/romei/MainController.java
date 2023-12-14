@@ -68,6 +68,12 @@ public class MainController {
     static TextField contactName;
     static TextField phone;
 
+    // @FXML
+    // public void initialize() {
+    //     //registersView.setMaxWidth(Double.MAX_VALUE);
+    //     parent.getLeft().setPaddin
+    //     parent.setPadding(N);
+    // }
     @FXML
     private void loadRegistersView() throws IOException {
         System.out.println("registers 1");
@@ -179,10 +185,11 @@ public class MainController {
         ComboBox productComboBox = new ComboBox();
         productComboBox.setPromptText("Elija un producto");
         // the next line should be replaced with a db access
-        productComboBox.getItems().addAll(MySqlUtil.getCurrentProducts());
+        ProductService ps = new ProductService();
+        productComboBox.getItems().addAll(ps.getProducts());
         productComboBox.setOnShowing(e -> {
             ObservableList<Product> p = FXCollections.observableArrayList();
-            p.setAll(MySqlUtil.getCurrentProducts());
+            p.setAll(ps.getProducts());
             productComboBox.setItems(p);
         });
         productContainer.getChildren().addAll(productTag, productComboBox);

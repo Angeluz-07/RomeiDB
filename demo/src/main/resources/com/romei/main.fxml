@@ -17,18 +17,21 @@
 
 <BorderPane fx:id="parent" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="com.romei.MainController" >
    <left>
-      <VBox>
-      <Button fx:id="registersView" text="Registros" onAction="#loadRegistersView"/>
-      <Button fx:id="reportsView" text="Reportes" onAction="#loadReportsView"/>
-      <Button fx:id="addProductsView" text="Agregar Productos" onAction="#loadAddProductsView"/>
-      <Button fx:id="updProductsView" text="Editar Productos" onAction="#loadUpdProductsView"/>
-      <Button fx:id="addUsersView" text="Agregar Usuarios" onAction="#loadAddUsersView"/>
-      <Button fx:id="updUsersView" text="Editar Usuarios" onAction="#loadUpdUsersView"/>
-      <Button fx:id="addSuppliersView" text="Agregar Proveedores" onAction="#loadAddSuppliersView"/>
-      <Button fx:id="updSuppliersView" text="Editar Proveedores" onAction="#loadUpdSuppliersView"/>
-      <Button fx:id="logout" text="Cerrar sesión" onAction="#runLogout"/>
-      <Button fx:id="exit" text="Exit" onAction="#runExit"/>
+      <VBox spacing="5">
+      <Button fx:id="registersView" maxWidth="Infinity" text="Registros" onAction="#loadRegistersView"/>
+      <Button fx:id="reportsView" maxWidth="Infinity" text="Reportes" onAction="#loadReportsView"/>
+      <Button fx:id="addProductsView" maxWidth="Infinity" text="Agregar Productos" onAction="#loadAddProductsView"/>
+      <Button fx:id="updProductsView" maxWidth="Infinity" text="Editar Productos" onAction="#loadUpdProductsView"/>
+      <Button fx:id="addUsersView" maxWidth="Infinity" text="Agregar Usuarios" onAction="#loadAddUsersView"/>
+      <Button fx:id="updUsersView" maxWidth="Infinity" text="Editar Usuarios" onAction="#loadUpdUsersView"/>
+      <Button fx:id="addSuppliersView" maxWidth="Infinity" text="Agregar Proveedores" onAction="#loadAddSuppliersView"/>
+      <Button fx:id="updSuppliersView" maxWidth="Infinity" text="Editar Proveedores" onAction="#loadUpdSuppliersView"/>
+      <Button fx:id="logout" maxWidth="Infinity" text="Cerrar sesión" onAction="#runLogout"/>
+      <Button fx:id="exit" maxWidth="Infinity" text="Exit" onAction="#runExit"/>
       </VBox>
+      <padding>
+         <Insets top="30" left="20" bottom="20" right="20"></Insets>
+      </padding>
    </left>
    <center>
       <StackPane>
