@@ -280,8 +280,8 @@ public class MainController {
                 return;
             }
 
-            Boolean supplierDoesntExist = productService.supplierDoesntExist(supplierName.getText());
-            if (supplierDoesntExist) {
+            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            if (!supplierExists) {
                 showErrorDialog("El Proveedor no esta registrado");
                 return;
             }
@@ -340,14 +340,6 @@ public class MainController {
 
         ProductService productService = new ProductService();
         productComboBox.getItems().addAll(productService.getProducts());
-        // productComboBox.setOnShowing(e -> {
-        // ObservableList<Product> productsToComboBox =
-        // FXCollections.observableArrayList();
-        // List<Product> products = productService.getProducts();
-        // productsToComboBox.setAll(products);
-        // productComboBox.setItems(productsToComboBox);
-        // });
-
         GridPane.setConstraints(productComboBox, 3, 1);
 
         // productName Label - constrains use (child, column, row)
@@ -371,45 +363,50 @@ public class MainController {
         TextField supplierName = new TextField();
         GridPane.setConstraints(supplierName, 1, 3);
 
-        
         productComboBox.setOnHidden(e -> {
             Product chosenProduct = (Product) productComboBox.getValue();
             productName.setText(chosenProduct.getName());
             price.setText(Double.toString(chosenProduct.getPrice()));
             supplierName.setText(chosenProduct.getSupplier().getContactName());
         });
-    
+
         Button deleteButton = new Button("Borrar");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(deleteButton);
+
         deleteButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, productName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    productName.getText(),
                     price.getText(),
                     supplierName.getText());
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
+            }
 
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                String query1 = "call getProductWithPrice(?,?)";
-                if (!dataIsInDB(fields.subList(0, 2), query1, "check if the product doesn't exit").isEmpty()) {
-                    String query2 = "select ContactName,phone from Suppliers where ContactName=? and inDB=1";
-                    if (!dataIsInDB(fields.subList(2, 3), query2, "check if exist supplier").isEmpty()) {
-                        data = new ArrayList();
-                        Collections.addAll(data, productComboBox.getValue().getProductPriceID(),
-                                productComboBox.getValue().getProductID());
-                        String query3 = "";
-                        query3 += "call setStateProduct(0,?,?)";
-                        if (MySqlUtil.queryWithData(data, query3, "TabAddProduct to delete")) {
-                            showInfoDialog("La operacion se realizo con exito!");
-                        } else {
-                            showErrorDialog("Un error ocurrio durante la transaccion");
-                        }
-                    } else {
-                        showErrorDialog("El Proveedor no esta registrado");
-                    }
-                } else {
-                    showErrorDialog("El producto no existe.");
-                }
+            // todo: this check could removed
+            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            if (!supplierExists) {
+                showErrorDialog("El Proveedor no esta registrado");
+                return;
+            }
+
+            Boolean productExists = productService.productExists(productName.getText(), price.getText());
+            if (!productExists) {
+                showErrorDialog("El producto no existe.");
+                return;
+            }
+            Boolean removedSuccessfully = productService.removeProduct(
+                    productComboBox.getValue().getProductPriceID(),
+                    productComboBox.getValue().getProductID());
+
+            if (removedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion");
             }
         });
         // save
@@ -418,36 +415,42 @@ public class MainController {
         GridPane.setConstraints(hbBtn, 1, 4);
         saveButton.setOnAction(e -> {
 
-            fields = new ArrayList();
-            Collections.addAll(fields, productName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    productName.getText(),
                     price.getText(),
                     supplierName.getText());
-
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                String query1 = "call getProductWithPrice(?,?)";
-                if (dataIsInDB(fields.subList(0, 2), query1, "check if exist the product").isEmpty()) {
-                    String query2 = "select ContactName,phone from Suppliers where ContactName=?";
-                    if (!dataIsInDB(fields.subList(2, 3), query2, "check if exist supplier").isEmpty()) {
-                        data = new ArrayList();
-                        Collections.addAll(data, supplierName.getText(),
-                                productName.getText(),
-                                Double.parseDouble(price.getText()),
-                                productComboBox.getValue().getProductID(),
-                                productComboBox.getValue().getProductPriceID());
-                        String query3 = "";
-                        query3 += "call updateProduct(?,?,?,?,?)";
-                        if (MySqlUtil.queryWithData(data, query3, "TabAddProduct to update")) {
-                            showInfoDialog("La operacion se realizo con exito!");
-                        } else {
-                            showErrorDialog("Un error ocurrio durante la transaccion");
-                        }
-                    } else {
-                        showErrorDialog("El Proveedor no esta registrado");
-                    }
-                } else {
-                    showErrorDialog("El producto ya existe.");
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+
+            Boolean productExists = productService.productExists(productName.getText(), price.getText());
+            if (productExists) {
+                showErrorDialog("El producto ya existe.");
+                return;
+            }
+
+            Boolean supplierExists = productService.suppliertExists(supplierName.getText());
+            if (!supplierExists) {
+                showErrorDialog("El Proveedor no esta registrado");
+                return;
+            }
+
+            Boolean updatedSuccessfully = productService.updateProduct(
+                    supplierName.getText(),
+                    productName.getText(),
+                    Double.parseDouble(price.getText()),
+                    productComboBox.getValue().getProductID(),
+                    productComboBox.getValue().getProductPriceID());
+
+            if (updatedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion");
+            }
+
         });
 
         actiontarget = new Text();

@@ -25,11 +25,11 @@ public class ProductService {
 
     }
 
-    public boolean supplierDoesntExist(String supplierName) {
+    public boolean suppliertExists(String supplierName) {
         String query2 = "select ContactName,phone from Suppliers where ContactName=? and inDB=1";
         List<Object> fields = new ArrayList();
         Collections.addAll(fields, supplierName);
-        return this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
+        return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
 
     }
 
@@ -38,6 +38,22 @@ public class ProductService {
         List<Object> data = new ArrayList();
         Collections.addAll(data, supplierName, productName, Double.parseDouble(price));
         return this.repository.queryWithData(data, query3, "TabAddProduct to insert");
+    }
+
+    public boolean removeProduct(Integer productPriceId, Integer productId) {
+        // logical deletion
+        String query3 = "call setStateProduct(0,?,?)";// todo: fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, productPriceId, productId);
+        return this.repository.queryWithData(data, query3, "TabAddProduct to delete");
+    }
+
+    public boolean updateProduct(String supplierName, String productName, Double price, Integer productId,
+            Integer productPriceId) {
+        String query3 = "call updateProduct(?,?,?,?,?)";// todo:fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, supplierName, productName, price, productId, productPriceId);
+        return this.repository.queryWithData(data, query3, "TabAddProduct to update");
     }
 
     public List<Product> getProducts() {
@@ -51,11 +67,11 @@ public class ProductService {
                 "ContactName");
         List<Map<String, Object>> items = this.repository.getItemsWithQuery(query, properties);
         List<Product> result = new ArrayList<>();
-        for(Map<String,Object> m : items){
+        for (Map<String, Object> m : items) {
             int productID = (int) m.get("ProductId");
             String productName = (String) m.get("ProductName");
             int productPriceID = (int) m.get("ProductPriceId");
-            BigDecimal priceBD = (BigDecimal)m.get("Price");
+            BigDecimal priceBD = (BigDecimal) m.get("Price");
             double price = priceBD.doubleValue();
             int supplierID = (int) m.get("SupplierID");
             String contactName = (String) m.get("ContactName");
