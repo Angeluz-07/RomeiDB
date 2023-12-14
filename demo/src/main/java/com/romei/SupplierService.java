@@ -25,6 +25,14 @@ public class SupplierService {
         return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
 
     }
+
+    public boolean suppliertExists(String supplierName, String phone) {
+        String query2 = "select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";//todo: fix
+        List<Object> fields = new ArrayList();
+        Collections.addAll(fields, supplierName, phone);
+        return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
+
+    }
     public boolean addSupplier(String contactName, String phone){
 
         String query2 = "";
@@ -36,47 +44,42 @@ public class SupplierService {
         return this.repository.queryWithData(fields, query2,  "TabAddUser to insert supplier");
     }
 
-    // public boolean removeUser(Integer userId) {
-    //     // logical deletion
-    //     String query3 = "call setStateUser(0,?)";//todo: fix
-    //     List<Object> data = new ArrayList();
-    //     Collections.addAll(data, userId);
-    //     return this.repository.queryWithData(data, query3, "TabAddUser to delete");
-    // }
+    public boolean removeSupplier(Integer supplierId) {
+        // logical deletion
+        String query3 = "call setStateSupplier(0,?)";//todo: fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, supplierId);
+        return this.repository.queryWithData(data, query3, "TabAddSupplier to delete");
+    }
 
-    // public boolean updateUser(String firstName, String lastName, String userName, String passInput,
-    //         Integer userId) {
-    //     String query3 = "call updateUser(?,?,?,?,?) ";//todo: fix
-    //     List<Object> data = new ArrayList();
-    //     Collections.addAll(data, firstName, lastName, userName, passInput,userId);
-    //     return this.repository.queryWithData(data, query3, "TabAdduser to update");
-    // }
+    public boolean updateSupplier(String supplierName, String phone, Integer supplierId) {
+        String query3 = "call updateSupplier(?,?,?)";//todo: fix
+        List<Object> data = new ArrayList();
+        Collections.addAll(data, supplierName, phone, supplierId);
+        return this.repository.queryWithData(data, query3, "TabAdduser to update");
+    }
 
-    // public List<User> getUsers() {
-    //     String sql = "select ";
-    //     sql += " UserID,FirstName,LastName,UserName,Password  ";
-    //     sql += " from Users ";
-    //     sql += " where inDB=1";
+    public List<Supplier> getSuppliers() {
+        String sql = "select ";
+        sql += " SupplierID,ContactName,Phone ";
+        sql += " from Suppliers ";
+        sql += " where inDB=1";
 
-    //     List<String> properties = Arrays.asList(
-    //             "UserID",
-    //             "FirstName",
-    //             "LastName",
-    //             "UserName",
-    //             "Password");
-    //     List<Map<String, Object>> items = this.repository.getItemsWithQuery(sql, properties);
-    //     List<User> result = new ArrayList<>();
-    //     for (Map<String, Object> m : items) {
-    //         int userID = (int) m.get("UserID");
-    //         String firstName = (String) m.get("FirstName");
-    //         String lastName = (String) m.get("LastName");
-    //         String userName = (String) m.get("UserName");
-    //         String pass = (String) m.get("Password");
+        List<String> properties = Arrays.asList(
+                "SupplierID",
+                "ContactName",
+                "Phone");
+        List<Map<String, Object>> items = this.repository.getItemsWithQuery(sql, properties);
+        List<Supplier> result = new ArrayList<>();
+        for (Map<String, Object> m : items) {
+            int supplierID = (int) m.get("SupplierID");
+            String ContactName = (String) m.get("ContactName");
+            String phone = (String) m.get("Phone");
+            
+            Supplier s = new Supplier(supplierID, ContactName, phone);
+            result.add(s);
+        }
+        return result;
 
-    //         User u = new User(firstName, lastName, userName, pass);
-    //         result.add(u);
-    //     }
-    //     return result;
-
-    // }
+    }
 }

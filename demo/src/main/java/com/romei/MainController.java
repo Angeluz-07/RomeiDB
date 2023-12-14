@@ -843,14 +843,9 @@ public class MainController {
 
         ComboBox<Supplier> supplierComboBox = new ComboBox();
         supplierComboBox.setPromptText("Elija un proveedor");
-        // the next line should be replaced with a db access
 
-        supplierComboBox.setOnShowing(e -> {
-            ObservableList<Supplier> suppliersToComboBox = FXCollections.observableArrayList();
-            suppliers = MySqlUtil.getCurrentSuppliers();
-            suppliersToComboBox.setAll(suppliers);
-            supplierComboBox.setItems(suppliersToComboBox);
-        });
+        SupplierService supplierService = new SupplierService();
+        supplierComboBox.getItems().addAll(supplierService.getSuppliers());
 
         supplierComboBox.setOnHidden(e -> {
             Supplier chosenSupplier = supplierComboBox.getValue();
@@ -878,24 +873,28 @@ public class MainController {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(deleteButton);
         deleteButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, contactName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    contactName.getText(),
                     phone.getText());
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                String query1 = "select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";
-                if (!dataIsInDB(fields.subList(0, 2), query1, "TabAddSupplier.java").isEmpty()) {
-                    data = new ArrayList();
-                    Collections.addAll(data, supplierComboBox.getValue().getSupplierID());
-                    String query2 = "";
-                    query2 += "call setStateSupplier(0,?)";
-                    if (MySqlUtil.queryWithData(data, query2, "TabAddSupplier on delete")) {
-                        showInfoDialog("La operacion se realizo con exito!");
-                    } else {
-                        showErrorDialog("Un error ocurrio durante la transaccion.");
-                    }
-                } else {
-                    showErrorDialog("El Proveedor no existe");
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
+            }
+            Boolean supplierExists = supplierService.suppliertExists(contactName.getText(), phone.getText());
+            if (!supplierExists) {
+                showErrorDialog("El Proveedor no existe");
+                return;
+            }
+            Boolean removedSuccessfully = supplierService.removeSupplier(supplierComboBox.getValue().getSupplierID());
+            if (removedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+                supplierComboBox.getItems().clear();
+                supplierComboBox.getItems().addAll(supplierService.getSuppliers());
+                supplierComboBox.getSelectionModel().selectFirst();
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion.");
             }
         });
 
@@ -904,27 +903,32 @@ public class MainController {
         hbBtn.getChildren().add(saveButton);
         GridPane.setConstraints(hbBtn, 1, 3);
         saveButton.setOnAction(e -> {
-            fields = new ArrayList();
-            Collections.addAll(fields, contactName.getText(),
+            List<Object> inputs = Arrays.asList(
+                    contactName.getText(),
                     phone.getText());
-            if (!thereAreEmptyFields(fields, actiontarget)) {
-                String query1 = "select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";
-                if (dataIsInDB(fields.subList(0, 2), query1, "TabAddSupplier.java").isEmpty()) {
-                    data = new ArrayList();
-                    Collections.addAll(data, contactName.getText(),
-                            phone.getText(),
-                            supplierComboBox.getValue().getSupplierID());
-                    String query2 = "";
-                    query2 += "call updateSupplier(?,?,?)";
-                    if (MySqlUtil.queryWithData(data, query2, "TabAddSupplier on update")) {
-                        showInfoDialog("La operacion se realizo con exito!");
-                    } else {
-                        showErrorDialog("Un error ocurrio durante la transaccion.");
-                    }
-                } else {
-                    showErrorDialog("El Proveedor ya esta registrado");
-                }
+            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
+            if (emptyInputs) {
+                actiontarget.setFill(Color.FIREBRICK);
+                actiontarget.setText("Por favor ingrese todos los campos");
+                return;
             }
+            Boolean supplierExists = supplierService.suppliertExists(contactName.getText(), phone.getText());
+            if (supplierExists) {
+                showErrorDialog("El Proveedor ya existe");
+                return;
+            }
+            Boolean updatedSuccessfully = supplierService.updateSupplier(contactName.getText(),
+                    phone.getText(),
+                    supplierComboBox.getValue().getSupplierID());
+            if (updatedSuccessfully) {
+                showInfoDialog("La operacion se realizo con exito!");
+                supplierComboBox.getItems().clear();
+                supplierComboBox.getItems().addAll(supplierService.getSuppliers());
+                supplierComboBox.getSelectionModel().selectFirst();
+            } else {
+                showErrorDialog("Un error ocurrio durante la transaccion.");
+            }
+
         });
 
         actiontarget = new Text();
