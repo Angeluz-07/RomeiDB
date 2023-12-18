@@ -5,18 +5,14 @@
  */
 package com.romei;
 
-import static com.romei.MySqlUtil.dataIsInDB;
-import static com.romei.Utils.bothFieldsEqual;
 import static com.romei.Utils.setDateFormat;
 import static com.romei.Utils.showErrorDialog;
 import static com.romei.Utils.showInfoDialog;
-import static com.romei.Utils.thereAreEmptyFields;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -29,14 +25,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.converter.IntegerStringConverter;
 
 /**
  *
@@ -68,27 +68,57 @@ public class MainController {
     static TextField contactName;
     static TextField phone;
 
-    // @FXML
-    // public void initialize() {
-    //     //registersView.setMaxWidth(Double.MAX_VALUE);
-    //     parent.getLeft().setPaddin
-    //     parent.setPadding(N);
-    // }
     @FXML
     private void loadRegistersView() throws IOException {
         System.out.println("registers 1");
+        RegisterService registerService = new RegisterService();
 
-        TableView<Register> registerTable = new TableView(RegisterTableUtil.getRegListToRegister());
+        TableView<Register> registerTable = new TableView<>();
         registerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         registerTable.setMinWidth(620);
         registerTable.setEditable(true);
+
+        TableColumn<Register, Integer> addedOrRemovedStockCol = new TableColumn<>("Editar Stock");
+        TableColumn<Register, Product> productCol = new TableColumn<>("Producto");
+        TableColumn<Register, Integer> initialStockCol = new TableColumn<>("Stock Inicial");
+        TableColumn<Register, Integer> finalStockCol = new TableColumn<>("Stock Final");
+        TableColumn<Register, Integer> quantitySoldCol = new TableColumn<>("Cantidad Vendida");
+        TableColumn<Register, Double> cashSaleCol = new TableColumn<>("Venta($)");
+        
+        // make editable
+        addedOrRemovedStockCol.setEditable(true);
+        finalStockCol.setEditable(true);
+
+        // make editable with text field
+        addedOrRemovedStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        addedOrRemovedStockCol.setId("addedOrRemovedStockColID");
+        // updateCell is an event of CellEditEvent type
+        // addedOrRemovedStockCol.setOnEditCommit(updateCell->updateRegisterTable(updateCell));
+        // todo: fix
+
+        finalStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        finalStockCol.setId("finalStockColID");
+        // updateCell is an event of CellEditEvent type
+        // finalStockCol.setOnEditCommit(updateCell -> updateRegisterTable(updateCell));
+        // todo: fix
+
+        // linkage between Register object and Table columns
+        // below the parameter is the name of the attribute in the class Register
+        addedOrRemovedStockCol.setCellValueFactory(new PropertyValueFactory<>("addedOrRemovedStock"));
+        productCol.setCellValueFactory(new PropertyValueFactory<>("product"));
+        initialStockCol.setCellValueFactory(new PropertyValueFactory<>("initialStock"));
+        finalStockCol.setCellValueFactory(new PropertyValueFactory<>("finalStock"));
+        quantitySoldCol.setCellValueFactory(new PropertyValueFactory<>("quantitySold"));
+        cashSaleCol.setCellValueFactory(new PropertyValueFactory<>("cashSale"));
+
         registerTable.getColumns().addAll(
-                RegisterTableUtil.getAddedOrRemovedStockColumn(),
-                RegisterTableUtil.getProductColumn(),
-                RegisterTableUtil.getInitialStockColumn(),
-                RegisterTableUtil.getFinalStockColumn(),
-                RegisterTableUtil.getQuantitySoldColumn(),
-                RegisterTableUtil.getCashSaleColumn());
+                addedOrRemovedStockCol,
+                productCol,
+                initialStockCol,
+                finalStockCol,
+                quantitySoldCol,
+                cashSaleCol);
+        registerTable.getItems().addAll(registerService.getRegisters());
 
         DatePicker datePicker = new DatePicker();
         datePicker.setEditable(false);
@@ -115,41 +145,38 @@ public class MainController {
         buttonsContainer.setSpacing(10);
         Button newRegB = new Button("Refrescar Tabla");
         newRegB.setOnAction(e -> {
-            registerTable.setItems(RegisterTableUtil.getRegListToRegister());
+            registerTable.getItems().clear();
+            registerTable.getItems().addAll(registerService.getRegisters());
         });
         Button saveRegB = new Button("Guardar");
 
         int userID = 1;// todo: fix
         saveRegB.setOnAction(e -> {
-            ObservableList<Register> registers = registerTable.getItems();
-            Register r;
-            boolean flag = true;
-            String query = "";
-            query += "insert into Registers (UserID,RegisterDate,ProductPriceID,InitialStock,FinalStock,QuantitySold,CashSale)";
-            query += "values(?,?,?,?,?,?,?)";
-            for (int i = 0; i < registers.size(); i++) {
-                data = new ArrayList();
-                r = registers.get(i);
-                Collections.addAll(data, userID,
+            boolean success = true;
+
+            for (Register r : registerTable.getItems()) {
+                success = registerService.addRegister(
+                        userID,
                         setDateFormat(datePicker.getEditor().getText()),
                         r.getProduct().getProductPriceID(),
                         r.getInitialStock(),
                         r.getFinalStock(),
                         r.getQuantitySold(),
-                        r.getCashSale(),
-                        r.getAddedOrRemovedStock());
-                flag = MySqlUtil.queryWithData(data.subList(0, 7), query, "TabRegister to insert registers");
-                if (r.getAddedOrRemovedStock() != 0) {
-                    String query2 = "";
-                    query2 += "call insertAORS(?)";
-                    flag = MySqlUtil.queryWithData(data.subList(7, 8), query2, "TabRegister to insert AORStock");
-                }
-                if (!flag) {
-                    showErrorDialog("Un error ocurrio durante la transaccion");
+                        r.getCashSale());
+                if (!success) {
+                    showErrorDialog("Un error ocurrio durante la transaccion de un item");
                     break;
                 }
+
+                success = registerService.addAORStockItem(r.getAddedOrRemovedStock());
+                if (!success) {
+                    showErrorDialog("Un error ocurrio durante la transaccion de un item");
+                    break;
+                }
+
             }
-            if (flag)
+
+            if (success)
                 showInfoDialog("La operacion se realizo con exito!");
             else
                 showErrorDialog("Un error ocurrio durante la transaccion");
@@ -349,7 +376,7 @@ public class MainController {
         addProductPane.setVgap(10);
         addProductPane.setHgap(10);
 
-        ComboBox<Product> productComboBox = new ComboBox();
+        ComboBox<Product> productComboBox = new ComboBox<>();
         productComboBox.setPromptText("Elija un producto");
         // the next line should be replaced with a db access
 

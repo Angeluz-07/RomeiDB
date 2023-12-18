@@ -24,24 +24,31 @@ public class Product {
         this.name = name;
         this.price = price;
     }
+
+    public Product(String name, double price, int productPriceID) {
+        this.name = name;
+        this.price = price;
+        this.productPriceID = productPriceID;
+    }
+
     public Product(String name, double price, Supplier supplier) {
         this.name = name;
         this.price = price;
-        this.supplier=supplier;
+        this.supplier = supplier;
     }
-    
-    public Product(String name, double price, int productPriceID,int productID, Supplier supplier) {
+
+    public Product(String name, double price, int productPriceID, int productID, Supplier supplier) {
         this.name = name;
-        this.productPriceID=productPriceID;
-        this.productID=productID;
+        this.productPriceID = productPriceID;
+        this.productID = productID;
         this.price = price;
-        this.supplier=supplier;
+        this.supplier = supplier;
     }
-    
+
     public Product(String name) {
-        this.name = name;    
+        this.name = name;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -81,7 +88,6 @@ public class Product {
     public void setProductID(int productID) {
         this.productID = productID;
     }
-    
 
     public Supplier getSupplier() {
         return supplier;
@@ -90,10 +96,10 @@ public class Product {
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
- 
+
     @Override
     public String toString() {
         return name + " $" + price;
     }
-    
+
 }
