@@ -611,7 +611,7 @@ public class MainController {
         addUserPane.setVgap(10);
         addUserPane.setHgap(10);
 
-        ComboBox<User> userComboBox = new ComboBox();
+        ComboBox<User> userComboBox = new ComboBox<>();
         userComboBox.setPromptText("Elija un usuario");
 
         UserService userService = new UserService();
@@ -848,7 +848,7 @@ public class MainController {
         addSupplierPane.setVgap(10);
         addSupplierPane.setHgap(10);
 
-        ComboBox<Supplier> supplierComboBox = new ComboBox();
+        ComboBox<Supplier> supplierComboBox = new ComboBox<>();
         supplierComboBox.setPromptText("Elija un proveedor");
 
         SupplierService supplierService = new SupplierService();

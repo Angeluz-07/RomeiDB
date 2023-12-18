@@ -17,7 +17,7 @@ public class ProductService {
 
     public boolean productExists(String productName, String price) {
         String query1 = "call getProductWithPrice(?,?)";// todo: fix
-        List<Object> fields = new ArrayList();
+        List<Object> fields = new ArrayList<>();
         Collections.addAll(fields, productName, Double.parseDouble(price));
         return !this.repository.dataIsInDB(fields, query1, "TabAddProduct to check if exist the product").isEmpty();
 
@@ -25,7 +25,7 @@ public class ProductService {
 
     public boolean addProduct(String supplierName, String productName, String price) {
         String query3 = "call insertProduct(?,?,?)";// todo:fix
-        List<Object> data = new ArrayList();
+        List<Object> data = new ArrayList<>();
         Collections.addAll(data, supplierName, productName, Double.parseDouble(price));
         return this.repository.queryWithData(data, query3, "TabAddProduct to insert");
     }
@@ -33,7 +33,7 @@ public class ProductService {
     public boolean removeProduct(Integer productPriceId, Integer productId) {
         // logical deletion
         String query3 = "call setStateProduct(0,?,?)";// todo: fix
-        List<Object> data = new ArrayList();
+        List<Object> data = new ArrayList<>();
         Collections.addAll(data, productPriceId, productId);
         return this.repository.queryWithData(data, query3, "TabAddProduct to delete");
     }
@@ -41,7 +41,7 @@ public class ProductService {
     public boolean updateProduct(String supplierName, String productName, Double price, Integer productId,
             Integer productPriceId) {
         String query3 = "call updateProduct(?,?,?,?,?)";// todo:fix
-        List<Object> data = new ArrayList();
+        List<Object> data = new ArrayList<>();
         Collections.addAll(data, supplierName, productName, price, productId, productPriceId);
         return this.repository.queryWithData(data, query3, "TabAddProduct to update");
     }

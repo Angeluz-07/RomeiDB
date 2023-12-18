@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class MysqlRepository implements IDBRepository {
 
@@ -28,7 +27,7 @@ public class MysqlRepository implements IDBRepository {
     Connection conn = null;
     PreparedStatement pstm = null;
     ResultSet rs = null;
-    List<Object> result = new ArrayList();
+    List<Object> result = new ArrayList<>();
     try {
       // -------------
       // ** PARTE 1 **
@@ -154,10 +153,6 @@ public class MysqlRepository implements IDBRepository {
     ResultSet rs = null;
 
     List<Map<String, Object>> result = new ArrayList<>();
-    /* Variables to create the objects */
-    ArrayList<Product> products = new ArrayList();
-    Product productTemp;
-    Supplier supplierTemp;
     try {
       // -------------
       // ** PARTE 1 **

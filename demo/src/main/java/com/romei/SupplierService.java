@@ -16,7 +16,7 @@ public class SupplierService {
 
     public boolean suppliertExists(String supplierName) {
         String query2 = "select ContactName,Phone from Suppliers where ContactName=? and inDB=1";
-        List<Object> fields = new ArrayList();
+        List<Object> fields = new ArrayList<>();
         Collections.addAll(fields, supplierName);
         return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
 
@@ -24,7 +24,7 @@ public class SupplierService {
 
     public boolean suppliertExists(String supplierName, String phone) {
         String query2 = "select ContactName,phone from Suppliers where ContactName=? and Phone=? and inDB=1";//todo: fix
-        List<Object> fields = new ArrayList();
+        List<Object> fields = new ArrayList<>();
         Collections.addAll(fields, supplierName, phone);
         return !this.repository.dataIsInDB(fields, query2, "check if exist supplier").isEmpty();
 
@@ -35,7 +35,7 @@ public class SupplierService {
         query2 += "insert into Suppliers(ContactName,Phone)";
         query2 += "values(?,?) ";
 
-        List<Object> fields = new ArrayList();
+        List<Object> fields = new ArrayList<>();
         Collections.addAll(fields, contactName, phone);
         return this.repository.queryWithData(fields, query2,  "TabAddUser to insert supplier");
     }
@@ -43,14 +43,14 @@ public class SupplierService {
     public boolean removeSupplier(Integer supplierId) {
         // logical deletion
         String query3 = "call setStateSupplier(0,?)";//todo: fix
-        List<Object> data = new ArrayList();
+        List<Object> data = new ArrayList<>();
         Collections.addAll(data, supplierId);
         return this.repository.queryWithData(data, query3, "TabAddSupplier to delete");
     }
 
     public boolean updateSupplier(String supplierName, String phone, Integer supplierId) {
         String query3 = "call updateSupplier(?,?,?)";//todo: fix
-        List<Object> data = new ArrayList();
+        List<Object> data = new ArrayList<>();
         Collections.addAll(data, supplierName, phone, supplierId);
         return this.repository.queryWithData(data, query3, "TabAdduser to update");
     }
