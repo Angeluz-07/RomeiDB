@@ -1,6 +1,7 @@
 package com.romei;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +60,7 @@ public class RegisterService {
 
     public List<Register> getRegisters() {
         String sql = "call getCurrentStock()";
-        List<String> properties = Arrays.asList(
+        List<String> properties = Arrays.asList(            
             "ProductName",
             "Price",
             "CurrentStock",
@@ -77,6 +78,34 @@ public class RegisterService {
             Product p = new Product(productName, price, productPriceId);
             Register r = new Register(p, currentStock);
 
+            result.add(r);
+        }
+        return result;
+
+    }
+
+    public List<Register> getRegistersForReport(String startDate, String endDate, int productPriceId) {
+        String sql = "call getregisterinfoinrange(?,?,?)";
+        List<String> properties = Arrays.asList(
+            "RegisterDate",
+            "QuantitySold",
+            "CashSale"
+        );
+
+        List<Object> data = new ArrayList<>();
+        Date startDate_ = java.sql.Date.valueOf(startDate);
+        Date endDate_ = java.sql.Date.valueOf(endDate);        
+        Collections.addAll(data, productPriceId, startDate_, endDate_);
+
+        List<Map<String, Object>> items = this.repository.getItemsWithQuery(sql,properties,data);
+        
+        List<Register> result = new ArrayList<>();
+        for (Map<String, Object> m : items) {                     
+            String date = (String)m.get("RegisterDate");
+            int quantitySold = (int)m.get("QuantitySold");
+            double cashSale = (double)m.get("CashSale");
+
+            Register r = new Register(date, quantitySold, cashSale);
             result.add(r);
         }
         return result;

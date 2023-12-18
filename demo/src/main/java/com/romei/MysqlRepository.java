@@ -234,4 +234,80 @@ public class MysqlRepository implements IDBRepository {
     return result;
     // return products;
   }
+
+  public List<Map<String,Object>> getItemsWithQuery(String query, List<String> properties, List<Object> data){
+    Connection conn = null;
+    PreparedStatement pstm = null;
+    ResultSet rs = null;
+
+    List<Map<String, Object>> result = new ArrayList<>();
+    try {
+      // -------------
+      // ** PARTE 1 **
+      // -------------
+      // levanto el driver
+      Class.forName(JDBC_DRIVER);
+      // establezco la conexion
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+      // -------------
+      // ** PARTE 2 **
+      // -------------
+      // defino un query
+      /*
+       * it gives nombre, producto, stockAlInicio
+       * trough a store procedure, previously created
+       */
+      String sql = query;
+
+      // preparo la sentencia que voy a ejecutar
+      System.out.println("Cooking the statement...");
+      // preparo la sentencia que voy a ejecutar
+      System.out.printf("Cooking the statement in %s...");
+      pstm = conn.prepareStatement(sql);
+      for (int i = 1; i <= data.size(); i++) {
+        // System.out.println(i+" "+fields.get(i-1));
+        pstm.setObject(i, data.get(i - 1));
+      }
+      rs = pstm.executeQuery();
+      // itero los resultados
+      Map<String, Object> tempMap;
+      while (rs.next()) {
+        tempMap = new HashMap<>();
+        for (String p : properties) {
+          Object obj = rs.getObject(p);
+          tempMap.put(p, obj);
+        }
+        result.add(tempMap);
+      }
+
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    } finally {
+      // -------------
+      // ** PARTE 3 **
+      // -------------
+      // cierro todos los recursos en
+      // orden inverso al que
+      // fueron adquiridos
+      try {
+        if (rs != null)
+          rs.close();
+        if (pstm != null)
+          pstm.close();
+        if (conn != null)
+          conn.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      } // end finally try
+    } // end try
+    // System.out.println("Goodbye!");
+    return result;
+    // return products
+  }
+
 }

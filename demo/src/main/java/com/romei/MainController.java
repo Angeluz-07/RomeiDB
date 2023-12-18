@@ -84,7 +84,7 @@ public class MainController {
         TableColumn<Register, Integer> finalStockCol = new TableColumn<>("Stock Final");
         TableColumn<Register, Integer> quantitySoldCol = new TableColumn<>("Cantidad Vendida");
         TableColumn<Register, Double> cashSaleCol = new TableColumn<>("Venta($)");
-        
+
         // make editable
         addedOrRemovedStockCol.setEditable(true);
         finalStockCol.setEditable(true);
@@ -190,8 +190,27 @@ public class MainController {
     @FXML
     private void loadReportsView() throws IOException {
         System.out.println("registers 2");
-        TableView reportTable = new TableView(RegisterTableUtil.getRegListToRegister());
+        RegisterService registerService= new RegisterService();
+
+        TableView<Register> reportTable = new TableView<>();
         reportTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        reportTable.setMinWidth(620);
+
+        TableColumn<Register, String> dateCol = new TableColumn<>("Fecha");
+        TableColumn<Register, Integer> quantitySoldCol =new TableColumn<>("Cantidad Vendida");        
+        TableColumn<Register, Double> cashSaleCol =new TableColumn<>("Venta($)");
+
+
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+        quantitySoldCol.setCellValueFactory(new PropertyValueFactory<>("quantitySold"));
+        cashSaleCol.setCellValueFactory(new PropertyValueFactory<>("cashSale"));
+    
+
+        reportTable.getColumns().addAll(dateCol,quantitySoldCol, cashSaleCol);
+                     reportTable.getItems().addAll(registerService.getRegisters());
+
+        // TableView reportTable = new
+        // TableView(RegisterTableUtil.getRegListToRegister());
         // datePicker.setValue(LocalDate.now());
         // datePicker.setEditable(false);
         VBox container = new VBox();
@@ -202,11 +221,6 @@ public class MainController {
         hbTitle.setAlignment(Pos.CENTER);
         container.getChildren().add(hbTitle);
 
-        reportTable.setMinWidth(620);
-        reportTable.getColumns().addAll(RegisterTableUtil.getDateColumn(),
-                RegisterTableUtil.getQuantitySoldColumn(),
-                RegisterTableUtil.getCashSaleColumn());
-
         HBox productContainer = new HBox();
         Label productTag = new Label("Producto : ");
         ComboBox productComboBox = new ComboBox();
@@ -214,11 +228,6 @@ public class MainController {
         // the next line should be replaced with a db access
         ProductService ps = new ProductService();
         productComboBox.getItems().addAll(ps.getProducts());
-        productComboBox.setOnShowing(e -> {
-            ObservableList<Product> p = FXCollections.observableArrayList();
-            p.setAll(ps.getProducts());
-            productComboBox.setItems(p);
-        });
         productContainer.getChildren().addAll(productTag, productComboBox);
         productContainer.setAlignment(Pos.CENTER);
 
@@ -248,9 +257,7 @@ public class MainController {
             ObservableList<Register> registersToTable = FXCollections.observableArrayList();
             Product p = (Product) productComboBox.getValue();
 
-            ArrayList<Register> registersFromDB = MySqlUtil.getRegToReport(dateIniFormatted,
-                    dateFinFormatted,
-                    p);
+            List<Register> registersFromDB = registerService.getRegistersForReport(dateIniFormatted,dateFinFormatted, p.getProductPriceID());
             if (!registersFromDB.isEmpty()) {
                 registersToTable.addAll(registersFromDB);
                 reportTable.setItems(registersToTable);
