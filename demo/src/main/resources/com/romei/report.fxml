@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="container" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.romei.ReportController" >
+<children>
+   <HBox alignment="CENTER">
+      <Text text="Reporte"/>
+   </HBox>
+   <TableView fx:id="reportTable">
+   <columns>
+      <TableColumn prefWidth="75.0" text="Fecha" fx:id="dateCol" />
+      <TableColumn prefWidth="75.0" text="Cantidad Vendida" fx:id="quantitySoldCol" />
+      <TableColumn prefWidth="75.0" text="Venta($)" fx:id="cashSaleCol" />
+   </columns>
+   </TableView>
+
+   <HBox fx:id="productContainer" alignment="CENTER">
+      <Label text="Producto : "/>
+      <ComboBox fx:id="productComboBox" promptText="Elija un producto"/>
+   </HBox>
+
+    <HBox fx:id="dateContainer" alignment="CENTER">
+      <Label text="Entre : "/>
+      <DatePicker fx:id="dateIni"/>
+      <Label text=" - "/>
+      <DatePicker fx:id="dateFin"/>
+   </HBox>
+
+
+   <HBox fx:id="buttonsContainer" alignment="CENTER" spacing="10">
+      <Button fx:id="genReportButton" text="Generar Reporte" onAction="#genReport"/>
+      <padding>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
+   </HBox>
+   
+</children>
+</VBox>
