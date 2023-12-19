@@ -209,10 +209,6 @@ public class MainController {
         reportTable.getColumns().addAll(dateCol,quantitySoldCol, cashSaleCol);
                      reportTable.getItems().addAll(registerService.getRegisters());
 
-        // TableView reportTable = new
-        // TableView(RegisterTableUtil.getRegListToRegister());
-        // datePicker.setValue(LocalDate.now());
-        // datePicker.setEditable(false);
         VBox container = new VBox();
 
         HBox hbTitle = new HBox();

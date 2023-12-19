@@ -1,8 +1,6 @@
 package com.romei;
 
-import static com.romei.MySqlUtil.dataIsInDB;
 import static com.romei.Utils.showErrorDialog;
-import static com.romei.Utils.thereAreEmptyFields;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,15 +38,17 @@ public class LoginController {
             warnBadInputs.setText("Por favor ingrese todos los campos");
             return;
         }
-
+        
         String QUERY = "select UserID,UserName,Password from Users where UserName=? and Password=?";
-        List<Object> dataInDB = dataIsInDB(inputs, QUERY, "LoginController");
-        Boolean noDataInDB = dataInDB.isEmpty();
+        //List<Object> dataInDB = dataIsInDB(inputs, QUERY, "LoginController");
+        //Boolean noDataInDB = dataInDB.isEmpty();
+        boolean noDataInDB = false;
         if (noDataInDB) {
             // the user & pass combination doesnt exist
             warnBadInputs.setText("El usuario o la clave son incorrectas");
         } else {
-            System.out.println(dataInDB.toString());
+            System.out.println("QUERY");//todo: fix
+            //System.out.println(dataInDB.toString());
             // todo: upd
             // TabRegister.userID=(Integer)dataInDB.get(0);
             // PaneOrg a=new PaneOrg();
