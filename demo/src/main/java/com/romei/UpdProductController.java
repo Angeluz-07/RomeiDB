@@ -1,7 +1,6 @@
 package com.romei;
 
 import static com.romei.Utils.showErrorDialog;
-import static com.romei.Utils.setDateFormat;
 import static com.romei.Utils.showInfoDialog;
 
 import java.io.IOException;

@@ -5,38 +5,9 @@
  */
 package com.romei;
 
-import static com.romei.Utils.setDateFormat;
-import static com.romei.Utils.showErrorDialog;
-import static com.romei.Utils.showInfoDialog;
-
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.util.converter.IntegerStringConverter;
 import javafx.scene.Parent;
 
 /**
@@ -46,30 +17,6 @@ import javafx.scene.Parent;
 public class MainController {
     @FXML
     private BorderPane parent;
-
-    static ArrayList<Object> data;
-    static ComboBox<Product> productComboBox;
-    static ArrayList<Object> fields;
-    static Text actiontarget;
-
-    static ArrayList<Product> products = new ArrayList();
-    static TextField productName;
-    static TextField price;
-    static TextField supplierName;
-    static ArrayList<User> users = new ArrayList();
-
-    static TextField firstName;
-    static TextField lastName;
-    static TextField userName;
-
-    static TextField passInput;
-    static TextField confirmPassInput;
-    static ArrayList<Supplier> suppliers = new ArrayList();
-
-    static TextField contactName;
-    static TextField phone;
-    @FXML
-    private RegisterController registerController;
 
     @FXML
     private void loadRegistersView() throws IOException {
@@ -116,121 +63,7 @@ public class MainController {
 
     @FXML
     private void loadUpdSuppliersView() throws IOException {
-        // GridPane with 10px padding around edge
-        VBox container = new VBox();
-
-        HBox hbTitle = new HBox();
-        hbTitle.getChildren().add(new Text("Ingrese los datos"));
-        hbTitle.setAlignment(Pos.CENTER);
-        container.getChildren().add(hbTitle);
-
-        GridPane addSupplierPane = new GridPane();
-        // addUserPane.setGridLinesVisible(true);
-        addSupplierPane.setPadding(new Insets(10, 10, 10, 10));
-        addSupplierPane.setVgap(10);
-        addSupplierPane.setHgap(10);
-
-        ComboBox<Supplier> supplierComboBox = new ComboBox<>();
-        supplierComboBox.setPromptText("Elija un proveedor");
-
-        SupplierService supplierService = new SupplierService();
-        supplierComboBox.getItems().addAll(supplierService.getSuppliers());
-
-        supplierComboBox.setOnHidden(e -> {
-            Supplier chosenSupplier = supplierComboBox.getValue();
-            contactName.setText(chosenSupplier.getContactName());
-            phone.setText(chosenSupplier.getPhone());
-        });
-        GridPane.setConstraints(supplierComboBox, 3, 1);
-
-        // ContactName Label - constrains use (child, column, row)
-        Label contactNameLabel = new Label("Nombre de Contacto:");
-        GridPane.setConstraints(contactNameLabel, 0, 1);
-        // firstName Input
-        contactName = new TextField();
-        GridPane.setConstraints(contactName, 1, 1);
-
-        // phone Label - constrains use (child, column, row)
-        Label phoneLabel = new Label("Telefono:");
-        GridPane.setConstraints(phoneLabel, 0, 2);
-        // lastName Input
-        phone = new TextField();
-        GridPane.setConstraints(phone, 1, 2);
-
-        Button deleteButton = new Button("Borrar");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(deleteButton);
-        deleteButton.setOnAction(e -> {
-            List<Object> inputs = Arrays.asList(
-                    contactName.getText(),
-                    phone.getText());
-            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
-            if (emptyInputs) {
-                actiontarget.setFill(Color.FIREBRICK);
-                actiontarget.setText("Por favor ingrese todos los campos");
-                return;
-            }
-            Boolean supplierExists = supplierService.suppliertExists(contactName.getText(), phone.getText());
-            if (!supplierExists) {
-                showErrorDialog("El Proveedor no existe");
-                return;
-            }
-            Boolean removedSuccessfully = supplierService.removeSupplier(supplierComboBox.getValue().getSupplierID());
-            if (removedSuccessfully) {
-                showInfoDialog("La operacion se realizo con exito!");
-                supplierComboBox.getItems().clear();
-                supplierComboBox.getItems().addAll(supplierService.getSuppliers());
-                supplierComboBox.getSelectionModel().selectFirst();
-            } else {
-                showErrorDialog("Un error ocurrio durante la transaccion.");
-            }
-        });
-
-        // save
-        Button saveButton = new Button("Guardar");
-        hbBtn.getChildren().add(saveButton);
-        GridPane.setConstraints(hbBtn, 1, 3);
-        saveButton.setOnAction(e -> {
-            List<Object> inputs = Arrays.asList(
-                    contactName.getText(),
-                    phone.getText());
-            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
-            if (emptyInputs) {
-                actiontarget.setFill(Color.FIREBRICK);
-                actiontarget.setText("Por favor ingrese todos los campos");
-                return;
-            }
-            Boolean supplierExists = supplierService.suppliertExists(contactName.getText(), phone.getText());
-            if (supplierExists) {
-                showErrorDialog("El Proveedor ya existe");
-                return;
-            }
-            Boolean updatedSuccessfully = supplierService.updateSupplier(contactName.getText(),
-                    phone.getText(),
-                    supplierComboBox.getValue().getSupplierID());
-            if (updatedSuccessfully) {
-                showInfoDialog("La operacion se realizo con exito!");
-                supplierComboBox.getItems().clear();
-                supplierComboBox.getItems().addAll(supplierService.getSuppliers());
-                supplierComboBox.getSelectionModel().selectFirst();
-            } else {
-                showErrorDialog("Un error ocurrio durante la transaccion.");
-            }
-
-        });
-
-        actiontarget = new Text();
-        GridPane.setConstraints(actiontarget, 1, 4);
-
-        // Add everything to grid
-        addSupplierPane.getChildren().addAll(contactNameLabel, phoneLabel);
-        addSupplierPane.getChildren().addAll(contactName, phone);
-        addSupplierPane.getChildren().addAll(hbBtn, actiontarget);
-        addSupplierPane.getChildren().add(supplierComboBox);
-        addSupplierPane.setAlignment(Pos.CENTER);
-
-        container.getChildren().add(addSupplierPane);
+        Parent container = App.loadFXML("updSupplier");
         parent.setCenter(container);
     }
 
