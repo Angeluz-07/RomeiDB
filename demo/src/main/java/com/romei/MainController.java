@@ -37,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.scene.Parent;
 
 /**
  *
@@ -67,123 +68,12 @@ public class MainController {
 
     static TextField contactName;
     static TextField phone;
-
+    @FXML
+    private RegisterController registerController;
+      
     @FXML
     private void loadRegistersView() throws IOException {
-        System.out.println("registers 1");
-        RegisterService registerService = new RegisterService();
-
-        TableView<Register> registerTable = new TableView<>();
-        registerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        registerTable.setMinWidth(620);
-        registerTable.setEditable(true);
-
-        TableColumn<Register, Integer> addedOrRemovedStockCol = new TableColumn<>("Editar Stock");
-        TableColumn<Register, Product> productCol = new TableColumn<>("Producto");
-        TableColumn<Register, Integer> initialStockCol = new TableColumn<>("Stock Inicial");
-        TableColumn<Register, Integer> finalStockCol = new TableColumn<>("Stock Final");
-        TableColumn<Register, Integer> quantitySoldCol = new TableColumn<>("Cantidad Vendida");
-        TableColumn<Register, Double> cashSaleCol = new TableColumn<>("Venta($)");
-
-        // make editable
-        addedOrRemovedStockCol.setEditable(true);
-        finalStockCol.setEditable(true);
-
-        // make editable with text field
-        addedOrRemovedStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        addedOrRemovedStockCol.setId("addedOrRemovedStockColID");
-        // updateCell is an event of CellEditEvent type
-        // addedOrRemovedStockCol.setOnEditCommit(updateCell->updateRegisterTable(updateCell));
-        // todo: fix
-
-        finalStockCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        finalStockCol.setId("finalStockColID");
-        // updateCell is an event of CellEditEvent type
-        // finalStockCol.setOnEditCommit(updateCell -> updateRegisterTable(updateCell));
-        // todo: fix
-
-        // linkage between Register object and Table columns
-        // below the parameter is the name of the attribute in the class Register
-        addedOrRemovedStockCol.setCellValueFactory(new PropertyValueFactory<>("addedOrRemovedStock"));
-        productCol.setCellValueFactory(new PropertyValueFactory<>("product"));
-        initialStockCol.setCellValueFactory(new PropertyValueFactory<>("initialStock"));
-        finalStockCol.setCellValueFactory(new PropertyValueFactory<>("finalStock"));
-        quantitySoldCol.setCellValueFactory(new PropertyValueFactory<>("quantitySold"));
-        cashSaleCol.setCellValueFactory(new PropertyValueFactory<>("cashSale"));
-
-        registerTable.getColumns().addAll(
-                addedOrRemovedStockCol,
-                productCol,
-                initialStockCol,
-                finalStockCol,
-                quantitySoldCol,
-                cashSaleCol);
-        registerTable.getItems().addAll(registerService.getRegisters());
-
-        DatePicker datePicker = new DatePicker();
-        datePicker.setEditable(false);
-        datePicker.setValue(LocalDate.now());
-
-        VBox container = new VBox();
-
-        HBox hbTitle = new HBox();
-        hbTitle.getChildren().add(new Text("Proceda a hacer el registro"));
-        hbTitle.setAlignment(Pos.CENTER);
-        container.getChildren().add(hbTitle);
-
-        container.getChildren().addAll(datePicker, registerTable);
-
-        HBox resultContainer = new HBox();
-        resultContainer.setAlignment(Pos.CENTER_RIGHT);
-        Label totalLabel = new Label("Total : ");
-        Label totalValLabel = new Label("      ");
-        resultContainer.getChildren().addAll(totalLabel, totalValLabel);
-
-        HBox buttonsContainer = new HBox();
-        buttonsContainer.setAlignment(Pos.CENTER);
-        buttonsContainer.setPadding(new Insets(10, 10, 10, 10));
-        buttonsContainer.setSpacing(10);
-        Button newRegB = new Button("Refrescar Tabla");
-        newRegB.setOnAction(e -> {
-            registerTable.getItems().clear();
-            registerTable.getItems().addAll(registerService.getRegisters());
-        });
-        Button saveRegB = new Button("Guardar");
-
-        int userID = 1;// todo: fix
-        saveRegB.setOnAction(e -> {
-            boolean success = true;
-
-            for (Register r : registerTable.getItems()) {
-                success = registerService.addRegister(
-                        userID,
-                        setDateFormat(datePicker.getEditor().getText()),
-                        r.getProduct().getProductPriceID(),
-                        r.getInitialStock(),
-                        r.getFinalStock(),
-                        r.getQuantitySold(),
-                        r.getCashSale());
-                if (!success) {
-                    showErrorDialog("Un error ocurrio durante la transaccion de un item");
-                    break;
-                }
-
-                success = registerService.addAORStockItem(r.getAddedOrRemovedStock());
-                if (!success) {
-                    showErrorDialog("Un error ocurrio durante la transaccion de un item");
-                    break;
-                }
-
-            }
-
-            if (success)
-                showInfoDialog("La operacion se realizo con exito!");
-            else
-                showErrorDialog("Un error ocurrio durante la transaccion");
-        });
-
-        buttonsContainer.getChildren().addAll(newRegB, saveRegB);
-        container.getChildren().addAll(resultContainer, buttonsContainer);
+        Parent container = App.loadFXML("register");
         parent.setCenter(container);
     }
 
