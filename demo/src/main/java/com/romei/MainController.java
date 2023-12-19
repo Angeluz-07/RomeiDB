@@ -70,7 +70,7 @@ public class MainController {
     static TextField phone;
     @FXML
     private RegisterController registerController;
-      
+
     @FXML
     private void loadRegistersView() throws IOException {
         Parent container = App.loadFXML("register");
@@ -408,77 +408,7 @@ public class MainController {
 
     @FXML
     private void loadAddSuppliersView() throws IOException {
-        // GridPane with 10px padding around edge
-        VBox container = new VBox();
-
-        HBox hbTitle = new HBox();
-        hbTitle.getChildren().add(new Text("Ingrese los datos"));
-        hbTitle.setAlignment(Pos.CENTER);
-        container.getChildren().add(hbTitle);
-
-        GridPane addSupplierPane = new GridPane();
-        // addUserPane.setGridLinesVisible(true);
-        addSupplierPane.setPadding(new Insets(10, 10, 10, 10));
-        addSupplierPane.setVgap(10);
-        addSupplierPane.setHgap(10);
-
-        // ContactName Label - constrains use (child, column, row)
-        Label contactNameLabel = new Label("Nombre de Contacto:");
-        GridPane.setConstraints(contactNameLabel, 0, 1);
-        // firstName Input
-        TextField contactName = new TextField();
-        GridPane.setConstraints(contactName, 1, 1);
-
-        // phone Label - constrains use (child, column, row)
-        Label phoneLabel = new Label("Telefono:");
-        GridPane.setConstraints(phoneLabel, 0, 2);
-        // lastName Input
-        TextField phone = new TextField();
-        GridPane.setConstraints(phone, 1, 2);
-
-        // save
-        Button saveButton = new Button("Guardar");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(saveButton);
-        GridPane.setConstraints(hbBtn, 1, 3);
-        SupplierService supplierService = new SupplierService();
-        saveButton.setOnAction(e -> {
-            List<Object> inputs = Arrays.asList(
-                    contactName.getText(),
-                    phone.getText());
-            Boolean emptyInputs = inputs.stream().map(s -> s.toString()).anyMatch(s -> s.isEmpty());
-            if (emptyInputs) {
-                actiontarget.setFill(Color.FIREBRICK);
-                actiontarget.setText("Por favor ingrese todos los campos");
-                return;
-            }
-
-            Boolean supplierExists = supplierService.suppliertExists(contactName.getText());
-            if (supplierExists) {
-                showErrorDialog("El Proveedor ya esta registrado");
-                return;
-            }
-            Boolean addedSuccessfully = supplierService.addSupplier(contactName.getText(),
-                    phone.getText());
-            if (addedSuccessfully) {
-                showInfoDialog("La operacion se realizo con exito!");
-            } else {
-                showErrorDialog("Un error ocurrio durante la transaccion.");
-            }
-
-        });
-
-        actiontarget = new Text();
-        GridPane.setConstraints(actiontarget, 1, 4);
-
-        // Add everything to grid
-        addSupplierPane.getChildren().addAll(contactNameLabel, phoneLabel);
-        addSupplierPane.getChildren().addAll(contactName, phone);
-        addSupplierPane.getChildren().addAll(hbBtn, actiontarget);
-        addSupplierPane.setAlignment(Pos.CENTER);
-
-        container.getChildren().add(addSupplierPane);
+        Parent container = App.loadFXML("addSupplier");
         parent.setCenter(container);
 
     }
