@@ -38,12 +38,9 @@ public class LoginController {
             warnBadInputs.setText("Por favor ingrese todos los campos");
             return;
         }
-        
-        String QUERY = "select UserID,UserName,Password from Users where UserName=? and Password=?";
-        //List<Object> dataInDB = dataIsInDB(inputs, QUERY, "LoginController");
-        //Boolean noDataInDB = dataInDB.isEmpty();
-        boolean noDataInDB = false;
-        if (noDataInDB) {
+        UserService userService = new UserService();
+        boolean userExists = userService.userExists(userNameInput.getText(), passwordInput.getText());
+        if (!userExists) {
             // the user & pass combination doesnt exist
             warnBadInputs.setText("El usuario o la clave son incorrectas");
         } else {

@@ -21,6 +21,14 @@ public class UserService {
 
     }
 
+    public boolean userExists(String userName, String password) {
+        String query1 = "select UserID from Users where UserName=? and Password=? and inDB=1";
+        List<Object> fields = new ArrayList<>();
+        Collections.addAll(fields, userName, password);
+        return !this.repository.dataIsInDB(fields, query1, "TabAddUsser.java to check if already exist user").isEmpty();
+
+    }
+
     public boolean addUser(String firstName, String lastName, String userName, String passInput){
         String query2 = "";
         query2 += "insert into Users (FirstName,LastName,UserName,Password)";

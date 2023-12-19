@@ -189,23 +189,6 @@ public class MysqlRepository implements IDBRepository {
         }
         result.add(tempMap);
 
-        // for p in pr
-        // properties.forEach(null);
-        // IntStream.range(0,properties.size()).forEach(i -> g);
-        // // Retrieve data row by row
-        // int productID = rs.getInt("ProductId");
-        // String productName = rs.getString("ProductName");
-        // int productPriceID = rs.getInt("ProductPriceId");
-        // double price = rs.getDouble("Price");
-        // int supplierID = rs.getInt("SupplierID");
-        // String contactName = rs.getString("ContactName");
-
-        // // Create objects with data obtained
-        // supplierTemp = new Supplier(supplierID, contactName);
-        // productTemp = new Product(productName, price, productPriceID, productID,
-        // supplierTemp);
-
-        // products.add(productTemp);
       }
 
     } catch (Exception e) {
