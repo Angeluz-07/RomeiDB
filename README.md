@@ -1,7 +1,8 @@
 # Romei Database System Project
 Project for the course of Database Systems, initially developed in 2017.
 
-Status: I am currently making improvements with the latest version of the technologies used(as a toy project)
+(_Updated in 2023_) : The project has been updated to use **JavaFXML**, **Repository pattern** for data retrieval and **MVC pattern** with the purpose to refresh Java skills.
+
 
 ## Technologies
 - Java
